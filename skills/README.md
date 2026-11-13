@@ -21,25 +21,22 @@ Catalogued 2026-11-13. 137 directories.
 
 ## Review
 
-Marketing is 49 of 137 skills. A vague growth or copy prompt can match a large part of that pack at once.
+Do not remove a source. No upstream pack is a subset of another. Marketing, UI audit, UI production, the general engineering lifecycle, and the issue-tracker workflow are five different jobs. Deleting `addyosmani/agent-skills` would drop security, observability, performance, CI, API design, browser testing, and migration, which the Matt Pocock pack does not contain. Deleting `mattpocock/skills` would drop the writing pipeline, handoff, research, triage, and domain docs, which the Addy pack does not contain.
 
-Two engineering packs cover the same lifecycle. When a prompt is broad ("add tests", "debug this", "review the branch"), both can match. Stay inside one pack for a task:
+The real overlap is a handful of skills whose descriptions both match a broad prompt ("add tests", "debug this", "review the branch"). About half of the Matt Pocock pack sets `disable-model-invocation: true`, so those entries are manual aliases and do not compete for automatic selection. `grill-me` and `grill-with-docs` only say "run `grilling`". `to-tickets` is the manual successor of `to-issues`; only `to-issues` is automatic. `design` is a router: it sends brand, tokens, and shadcn work to `brand`, `design-system`, and `ui-styling`, and keeps logo, CIP, and icon work itself. Removing those siblings breaks the router.
 
-| Job | In a Matt Pocock issue flow | In a general coding session |
+One pair is the same document installed twice. `diagnosing-bugs` (updated 2026-08-15) is `diagnose` (2026-05-09) plus secret redaction and a tighter phase-1 gate. Remove `diagnose` and keep `diagnosing-bugs`.
+
+These jobs are implemented twice and both copies are automatic. They are not the same text, so this is a choice, not a dedupe. The Addy copy is a long standalone procedure. The Matt copy is short and assumes `CONTEXT.md`, ADRs, and `setup-matt-pocock-skills`. No `docs/agents/issue-tracker.md` exists under `~/Projects` (checked 2026-11-13), so that setup has not been recorded. The Addy copy works without it. Keep both until that setup exists; if the double match gets in the way, remove the Matt name in the right-hand column, not the whole source.
+
+| Job | Keep (works without the issue tracker) | Also installed, automatic |
 | --- | --- | --- |
-| Spec before code | `to-prd`, `to-spec` | `spec-driven-development` |
-| Split into tickets | `to-tickets` (records blocking edges) | `planning-and-task-breakdown` |
-| Test-first | `tdd` | `test-driven-development` |
-| Hard bug | `diagnose` | `debugging-and-error-recovery` |
-| Review a diff | `code-review` (standards and the originating spec) | `code-review-and-quality` |
-| Stress-test a plan | `grill-with-docs` (also writes ADRs) | `interview-me`, `idea-refine` |
-
-Same-pack duplicates, same job described twice:
-
-- `diagnose` and `diagnosing-bugs` are the same diagnosis loop. `diagnose` states the six steps in its description.
-- `grill-me`, `grilling`, and `grill-with-docs` all interview a plan. `grill-with-docs` is the one that writes ADRs and a glossary. `loop-me` is that interview scoped to workflows in this workspace.
-- `to-issues` and `to-tickets` both split a plan into tracer bullets. `to-tickets` declares blocking edges.
-- `design` already bundles logo, banner, slide, and icon work that also exists as `banner-design`, `slides`, `brand`, and `design-system`.
+| Test-first | `test-driven-development` | `tdd` |
+| Hard bug | `debugging-and-error-recovery`, and `diagnosing-bugs` for the tight loop | `diagnose` (delete; older copy of `diagnosing-bugs`) |
+| Review a diff | `code-review-and-quality` | `code-review` |
+| Spec before code | `spec-driven-development` | `to-prd` |
+| Split into tasks | `planning-and-task-breakdown` | `to-issues` |
+| Stress-test a plan | `interview-me`, `idea-refine` | `grilling` |
 
 UI, pick by what the task is allowed to touch:
 
