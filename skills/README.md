@@ -2,7 +2,7 @@
 
 Human index of the agent skills in this directory. Each skill is a folder whose `SKILL.md` description is what an agent matches against. This file is not loaded as a skill.
 
-Catalogued 2026-11-13. 137 directories.
+Catalogued 2026-11-13. 142 directories.
 
 ## Inventory
 
@@ -13,11 +13,16 @@ Catalogued 2026-11-13. 137 directories.
 | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) | 24 | General engineering lifecycle |
 | [ibelick/ui-skills](https://github.com/ibelick/ui-skills) | 7 | UI audit and fixes |
 | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 7 | Design systems and visual production |
+| [anthropics/skills](https://github.com/anthropics/skills) | 1 | Visual direction for new UI |
+| [emilkowalski/skills](https://github.com/emilkowalski/skills) | 1 | Interface craft and motion |
+| [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | 1 | Design commands: polish, critique, audit |
+| [shadcn/ui](https://github.com/shadcn/ui) | 1 | Official shadcn/ui component skill |
+| [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | 1 | Web Interface Guidelines review |
 | [vercel-labs/skills](https://github.com/vercel-labs/skills) | 1 | Finding skills to install |
 | agent.qq.com | 1 | Mail via agently-cli |
 | Local, not in `.skill-lock.json` | 6 | Notes, schedule, news, logos, repos |
 
-131 entries are pinned in `.skill-lock.json`. These six are on disk only: `local-knowledge`, `raster-to-arcs`, `repotracker`, `tencent-news`, `winnie-schedule`, `wlb-work-notes`. A reinstall from the lock does not restore them. `repotracker` is a symlink to `~/Projects/Mine/WLB/tools/repotracker`.
+136 entries are pinned in `.skill-lock.json`. These six are on disk only: `local-knowledge`, `raster-to-arcs`, `repotracker`, `tencent-news`, `winnie-schedule`, `wlb-work-notes`. A reinstall from the lock does not restore them. `repotracker` is a symlink to `~/Projects/Mine/WLB/tools/repotracker`.
 
 ## Review
 
@@ -191,29 +196,19 @@ Source: nextlevelbuilder/ui-ux-pro-max-skill. `design` overlaps the narrower ski
 | [ui-styling](ui-styling/SKILL.md) | Build UI with shadcn/ui, Radix, and Tailwind, including theme and dark mode. |
 | [ui-ux-pro-max](ui-ux-pro-max/SKILL.md) | Searchable local data for styles, palettes, type, charts, and stack-specific UI. |
 
-### Sources not installed
+### Direction, review, and components
 
-Checked 2026-11-13 against the [skills.sh](https://skills.sh/) leaderboard and each repo's GitHub page. Install one named skill, not the whole repository. These sit next to the two packs above; they do not replace them.
+Installed 2026-11-13, one skill from each source. Each is also linked from `~/.claude/skills`.
 
-| Source | Stars | Skill to add | Installs | Job, next to what is already here |
-| --- | ---: | --- | ---: | --- |
-| [anthropics/skills](https://github.com/anthropics/skills) | 193,841 | `frontend-design` | 1.1M | Aesthetic direction that refuses a generic AI look. `ui-ux-pro-max` is the local style catalog. |
-| [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | 33,982 | `web-design-guidelines` | 856.7K | Review files against the live Web Interface Guidelines. The ibelick `fixing-*` skills are local checklists. |
-| [shadcn-ui/ui](https://github.com/shadcn-ui/ui) | 128,067 | `shadcn` | 145.8K | Official shadcn/ui skill: reads `components.json` and drives the CLI. `ui-styling` is a third-party guide to the same library. |
-| [emilkowalski/skills](https://github.com/emilkowalski/skills) | 56,492 | `emil-design-eng` | 443.6K | Motion and interface craft from Emil Kowalski (Vercel, Linear). `fixing-motion-performance` is about jank, not about whether the motion should exist. |
-| [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | 109,177 | `impeccable` | 404.7K | One skill, many commands (`polish`, `critique`, `audit`). The author's installer may download a binary on first run. |
+| Skill | What it does |
+| --- | --- |
+| [emil-design-eng](emil-design-eng/SKILL.md) | Emil Kowalski's rules for polish, component design, and which motion is worth adding. |
+| [frontend-design](frontend-design/SKILL.md) | Set palette, type, and layout for a new or reshaped UI so it does not read as a template. |
+| [impeccable](impeccable/SKILL.md) | Design commands for a whole surface: shape, critique, audit, polish, animate. The skill folder ships its scripts; a later command may still download a helper binary. |
+| [shadcn](shadcn/SKILL.md) | Add, search, and compose shadcn/ui from the project's `components.json`. |
+| [web-design-guidelines](web-design-guidelines/SKILL.md) | Review UI files against the current Web Interface Guidelines. |
 
-Same repositories, only if that narrower job comes up: Anthropic `canvas-design` (131.7K), `brand-guidelines` (119.2K), `theme-factory` (102.0K); Emil `review-animations` (304.7K) and `apple-design` (295.9K). `brand-guidelines` overlaps the installed `brand`. Do not add Anthropic's document skills (`docx`, `pdf`, `pptx`) or all 19 Emil skills.
-
-[leonxlnx/taste-skill](https://github.com/leonxlnx/taste-skill) has 114,537 stars and `design-taste-frontend` has 770.4K installs. It is a pack of aesthetic variants. `ui-ux-pro-max` already covers that job, so leave the pack out.
-
-```bash
-npx skills add anthropics/skills --skill frontend-design -g -y
-npx skills add vercel-labs/agent-skills --skill web-design-guidelines -g -y
-npx skills add shadcn/ui --skill shadcn -g -y
-npx skills add emilkowalski/skills --skill emil-design-eng -g -y
-npx impeccable install
-```
+Left uninstalled on purpose: the rest of `anthropics/skills` (documents, slides, brand, theme), the other 18 Emil skills, and [leonxlnx/taste-skill](https://github.com/leonxlnx/taste-skill) (aesthetic variants already covered by `ui-ux-pro-max`).
 
 ## Marketing
 
