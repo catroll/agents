@@ -191,6 +191,30 @@ Source: nextlevelbuilder/ui-ux-pro-max-skill. `design` overlaps the narrower ski
 | [ui-styling](ui-styling/SKILL.md) | Build UI with shadcn/ui, Radix, and Tailwind, including theme and dark mode. |
 | [ui-ux-pro-max](ui-ux-pro-max/SKILL.md) | Searchable local data for styles, palettes, type, charts, and stack-specific UI. |
 
+### Sources not installed
+
+Checked 2026-11-13 against the [skills.sh](https://skills.sh/) leaderboard and each repo's GitHub page. Install one named skill, not the whole repository. These sit next to the two packs above; they do not replace them.
+
+| Source | Stars | Skill to add | Installs | Job, next to what is already here |
+| --- | ---: | --- | ---: | --- |
+| [anthropics/skills](https://github.com/anthropics/skills) | 193,841 | `frontend-design` | 1.1M | Aesthetic direction that refuses a generic AI look. `ui-ux-pro-max` is the local style catalog. |
+| [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | 33,982 | `web-design-guidelines` | 856.7K | Review files against the live Web Interface Guidelines. The ibelick `fixing-*` skills are local checklists. |
+| [shadcn-ui/ui](https://github.com/shadcn-ui/ui) | 128,067 | `shadcn` | 145.8K | Official shadcn/ui skill: reads `components.json` and drives the CLI. `ui-styling` is a third-party guide to the same library. |
+| [emilkowalski/skills](https://github.com/emilkowalski/skills) | 56,492 | `emil-design-eng` | 443.6K | Motion and interface craft from Emil Kowalski (Vercel, Linear). `fixing-motion-performance` is about jank, not about whether the motion should exist. |
+| [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | 109,177 | `impeccable` | 404.7K | One skill, many commands (`polish`, `critique`, `audit`). The author's installer may download a binary on first run. |
+
+Same repositories, only if that narrower job comes up: Anthropic `canvas-design` (131.7K), `brand-guidelines` (119.2K), `theme-factory` (102.0K); Emil `review-animations` (304.7K) and `apple-design` (295.9K). `brand-guidelines` overlaps the installed `brand`. Do not add Anthropic's document skills (`docx`, `pdf`, `pptx`) or all 19 Emil skills.
+
+[leonxlnx/taste-skill](https://github.com/leonxlnx/taste-skill) has 114,537 stars and `design-taste-frontend` has 770.4K installs. It is a pack of aesthetic variants. `ui-ux-pro-max` already covers that job, so leave the pack out.
+
+```bash
+npx skills add anthropics/skills --skill frontend-design -g -y
+npx skills add vercel-labs/agent-skills --skill web-design-guidelines -g -y
+npx skills add shadcn/ui --skill shadcn -g -y
+npx skills add emilkowalski/skills --skill emil-design-eng -g -y
+npx impeccable install
+```
+
 ## Marketing
 
 Source: coreyhaines31/marketingskills. All 49.
