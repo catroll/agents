@@ -35,6 +35,25 @@ Confirmed by the user on 2026-11-12.
 - Until the whitelist is updated, anything that needs those machines (deploys,
   log reads, config changes) is blocked; say so instead of retrying ssh.
 
+## Test runs must keep their artifacts
+
+Confirmed by the user on 2026-11-12.
+
+- During testing, never throw away what was produced because it is
+  "temporary". Keep the response body, the request payload and the logs in a
+  cache or temp directory (`$PWD/.cache/...`, `~/.cache/...`, or
+  `/tmp/<topic>/<run-label>/` on the test host) until the results are written
+  into the report; only then may they be cleaned up.
+- Keep the full HTTP exchange for every request: request headers and body,
+  response headers and body. Redact secrets (`Authorization`, cookies, API
+  keys) but keep the status, the error strings and the response shape, so a
+  later diagnosis does not depend on re-running a paid or hours-long request.
+- Log in detail: timestamps, endpoint, model and params, attempt number,
+  first-byte time, total time, HTTP status, usage/token counts, stop reason,
+  and the exact error text.
+- On a remote test host, write artifacts into a per-run directory and copy
+  them back (scp/rsync); do not leave the only copy on the ephemeral host.
+
 ## Work records belong in the weekly WLB file
 
 Confirmed by the user on 2026-11-11. This covers schedule items, work content,
@@ -1427,3 +1446,50 @@ If the only hit is where it is set, the option is a no-op for that code path.
 Then choose the narrow workaround (`post-init DOM class swap`, custom toolbar with
 the documented `icon` markup, etc.) and write the evidence next to it, so the
 next reader does not re-trust the option.
+
+## A rejected form save that redirects is a data-loss bug
+
+**Signal.** "I submitted, it said failure, and everything I typed was gone." The
+save handler calls `flash(...)` + `c.Redirect(303, formPath)` on a validation
+failure, and the GET form re-renders from the stored state.
+
+**Cause.** Post/Redirect/Get is right for the success path only. On failure the
+redirect discards the POST body: the page shows the previously saved config
+(blank for a create form), so the user's input is lost. It also hides which
+field was wrong because the error is a toast, not a field marker.
+
+**Fix / check.** On validation failure re-render the same template with 400/422,
+the submitted **non-secret** values and `FormErrors` mapped per field; never echo
+credentials, passwords or API keys. Search a handler for `Redirect` in every
+validation branch — that is the whole audit. Three corollaries from the TinyAPI
+run:
+- A visible required `*` must be derived from what the server actually rejects.
+  Marking a field the server accepts (empty forgot-password email) and not
+  marking a table the server rejects (dynamic model rows) both make the UI lie.
+  HTML `required` alone is a convenience, not validation.
+- An inline `<script>` inside a template's `content` block runs **before** the
+  layout's `<script src="...bootstrap...">`: `new bootstrap.Modal(...)` there
+  throws `ReferenceError` silently, and both "reopen the modal after 422" and
+  "show the one-time key on success" fail invisibly. Wrap it in
+  `DOMContentLoaded`, or move the logic into the deferred app script.
+- One-time tokens: call `valid(token)` and validate the submitted data, and only
+  `consume(token)` after everything passes. `consume` first turns one password
+  typo into a permanently dead reset link.
+
+## A second agent session in the same working tree can commit your files
+
+**Signal.** Files you edited minutes ago show up inside another commit's diff;
+`git status` flips between two unrelated change sets; commits describing a
+different feature carry your hunks. A shared CSS or i18n file is the usual
+victim.
+
+**Cause.** Two agent sessions share one checkout. When either runs
+`git add -A` / `git add .`, it sweeps in whatever the other session has in
+flight — including unfinished edits and deletions.
+
+**Fix.** In a shared worktree, stage explicit paths only (`git add <paths>`),
+never `git add -A`; review `git diff --cached --name-only` against your own file
+list before committing; commit small, verified slices early instead of leaving a
+large dirty tree; for a long independent task, work in a separate worktree or
+branch (`create_worktree`). Put what belongs to the change set in the commit
+body, because the file list may later prove incomplete.
