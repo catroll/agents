@@ -3,30 +3,18 @@
 User-level technical preferences that apply to every project. Treat these as
 defaults unless a project's own `AGENTS.md` explicitly overrides them.
 
-Confirmed by the user on 2026-10-12; extended on 2026-10-13, 2026-11-05,
-2026-11-08, 2026-11-11, 2026-11-12 and 2026-11-13.
-
 ## How this file is organised
 
-This file is loaded on every turn. Additions go in one of two places:
+This file is loaded on every turn.
 
-- A rule that should change behaviour on every turn (a stack default, a
-  commit habit, a standing permission) is a new section above Lessons.
-- A diagnostic note — one signal, one cause, one check — is a new file
-  `~/.agents/lessons/<slug>.md` plus one bullet under Lessons. The bullet
-  leads with the exact error string or command. Read that file before
-  changing code, config, or the diagnosis. Do not paste the note in here.
-
-On 2026-11-13 the notes that had been appended to this file were moved into
-`lessons/`. Their wording was left as written.
+- A rule that should change behaviour on every turn is a new section above Lessons.
+- A diagnostic note is a file in `~/.agents/lessons/` plus one bullet under Lessons. Read that file when its bullet matches.
 
 ## Language
 
 - Write **everything in English**: code comments, doc comments, log messages,
   error strings, user-facing responses, API payloads, commit messages, test
   names, README and other documentation.
-- This holds regardless of the language the user writes in. A Chinese prompt
-  still produces English artifacts.
 - Conversational replies to the user may be in the user's language.
 
 ## Security and cost are design gates
@@ -56,18 +44,13 @@ On 2026-11-13 the notes that had been appended to this file were moved into
 
 - **Default to the newest stable, actively maintained version of every
   dependency**, not the version you recognise. Age is a smell, not a virtue.
-- **Verify, do not recall.** Before vendoring or importing a dependency, check
-  the upstream release channel (`npm view <pkg> dist-tags`, `go list -m -versions`,
-  the project's releases page). Distinguish clearly between *I know this version*
-  and *this is the current version* — they are different claims and only the
-  second one matters.
-- If a newer major exists, either adopt it or write down the **concrete**
-  blocker. "The older one is more familiar", "it is the well-known stable line",
-  or "the docs I remember use it" are **not** blockers.
-- A legitimate reason looks like: the newer major is still pre-release
-  (alpha/beta/rc); it has an unresolved regression affecting us; it dropped a
-  feature we depend on; it has no stable release at all; or it is unmaintained
-  while the older line is still patched.
+- Before vendoring or importing a dependency, check the upstream release
+  channel (`npm view <pkg> dist-tags`, `go list -m -versions`, the project's
+  releases page) and use what that check returns.
+- If a newer major exists, adopt it or write down the concrete blocker: it is
+  still pre-release (alpha/beta/rc); it has an unresolved regression affecting
+  us; it dropped a feature we depend on; it has no stable release; or it is
+  unmaintained while the older line is still patched.
 - Check maintenance health, not just the version number: last release date,
   commit recency, open-issue trend, whether the old line still receives security
   fixes, and whether the project is archived or in maintenance mode.
@@ -99,22 +82,10 @@ On 2026-11-13 the notes that had been appended to this file were moved into
      wrapper element?
   Only after all three is "the framework cannot do this" a real conclusion, and
   it has to be written down with the evidence.
-- **A custom layer is a last resort, not a first instinct.** Overriding a
-  framework means owning that behaviour for ever: every upstream upgrade has to
-  be re-checked against your override, and the override is the thing that will
-  be wrong. Prefer the framework's imperfection to your own maintenance burden.
-- This applies to visual style specifically. If a library's dark theme is
-  greyer or flatter than you would have designed, that is the library's
-  decision: **take it as given**. Consistency with the framework beats a
-  locally nicer screen that diverges from everything else.
-- Legitimate reasons to override, and they are narrow: the framework has no
-  mechanism at all for what is needed; a genuine accessibility defect; a
-  security problem; or a documented regression. "I prefer it this way" is not
-  one of them.
-- When a customisation is genuinely justified, keep it **as small and as
-  additive as possible** — a variable, a class on top of the framework's own, a
-  config option it already exposes — rather than a replacement, and say in a
-  comment why the framework could not do it.
+- Override only when the framework has no mechanism for what is needed, or
+  there is an accessibility defect, a security problem, or a documented
+  regression. Keep that override additive — a variable, a class, or a config
+  option the framework already exposes — and say in a comment why it could not.
 
 ## HTTP framework: Gin
 
@@ -175,50 +146,21 @@ On 2026-11-13 the notes that had been appended to this file were moved into
 
 ## Git hygiene
 
-- **Committing to git is part of finishing the work, not an afterthought.** The
-  user called this out explicitly as a habit to keep: once a change is complete
-  and verified, commit it in the same turn.
-- Never leave verified work uncommitted at the end of a turn, and never leave
-  it uncommitted silently — if something is deliberately left out, say so.
-- Commit in logical units. One coherent change per commit, not one commit per
-  file and not everything in a single dump.
+- Once a change is complete and verified, commit it in the same turn. One
+  coherent change per commit. If something is deliberately left out, say so.
 - The message explains **why**, not just what. A future reader should not have
   to reconstruct the reasoning from the diff.
-- Record decisions **at the point of decision**: dependency and version choices,
-  what was deliberately *not* done, and any blocker that justified the choice.
-  If no reason is written down, the default assumption is that the newest
-  maintained option should have been used.
-- **Never run `git push`.** Not "only when asked" — never. The user pushes
-  themselves. Commit locally and stop there.
-- After committing, state plainly what is unpushed and how far ahead the branch
-  is, so the user can push deliberately. Do not offer to push, and do not treat
-  pushing as the natural next step.
+- **Never run `git push`.** After committing, state what is unpushed and how
+  far ahead the branch is.
 - Inspect before committing: `git status` and `git diff --stat`.
+  - Stage explicit paths (`git add <paths>`).
   - Confirm the index contains exactly the intended change set.
   - Confirm nothing sensitive is staged (data directories, generated keys,
     machine-local config).
   - Confirm nothing intended was forgotten (unstaged or untracked files).
 - When work depends on a rebuild — embedded assets, generated files, vendored
-  bundles — rebuild and re-verify before committing, not after.
+  bundles — rebuild and re-verify before committing.
 - Do not rewrite published history, and do not commit over a failing build.
-
-## A second agent session in the same working tree can commit your files
-
-**Signal.** Files you edited minutes ago show up inside another commit's diff;
-`git status` flips between two unrelated change sets; commits describing a
-different feature carry your hunks. A shared CSS or i18n file is the usual
-victim.
-
-**Cause.** Two agent sessions share one checkout. When either runs
-`git add -A` / `git add .`, it sweeps in whatever the other session has in
-flight — including unfinished edits and deletions.
-
-**Fix.** In a shared worktree, stage explicit paths only (`git add <paths>`),
-never `git add -A`; review `git diff --cached --name-only` against your own file
-list before committing; commit small, verified slices early instead of leaving a
-large dirty tree; for a long independent task, work in a separate worktree or
-branch (`create_worktree`). Put what belongs to the change set in the commit
-body, because the file list may later prove incomplete.
 
 ## Every software project ships a Makefile with `make help`
 
@@ -253,18 +195,14 @@ existing, whatever the language.
 
 Confirmed by the user on 2026-11-12.
 
-- During testing, never throw away what was produced because it is
-  "temporary". Keep the response body, the request payload and the logs in a
-  cache or temp directory (`$PWD/.cache/...`, `~/.cache/...`, or
-  `/tmp/<topic>/<run-label>/` on the test host) until the results are written
-  into the report; only then may they be cleaned up.
-- Keep the full HTTP exchange for every request: request headers and body,
-  response headers and body. Redact secrets (`Authorization`, cookies, API
-  keys) but keep the status, the error strings and the response shape, so a
-  later diagnosis does not depend on re-running a paid or hours-long request.
-- Log in detail: timestamps, endpoint, model and params, attempt number,
-  first-byte time, total time, HTTP status, usage/token counts, stop reason,
-  and the exact error text.
+- During testing, keep what was produced until the results are written into
+  the report. Use a cache or temp directory (`$PWD/.cache/...`, `~/.cache/...`,
+  or `/tmp/<topic>/<run-label>/` on the test host).
+- For every request, keep the exchange: request and response headers and body,
+  timestamps, endpoint, model and params, attempt number, first-byte time,
+  total time, HTTP status, usage or token counts, stop reason, and the exact
+  error text. Redact secrets (`Authorization`, cookies, API keys); keep the
+  status, the error strings, and the response shape.
 - On a remote test host, write artifacts into a per-run directory and copy
   them back (scp/rsync); do not leave the only copy on the ephemeral host.
 
@@ -278,10 +216,8 @@ meeting records, decisions — anything worth writing down about a day or a week
   per week, named and placed by that week's Monday).
 - If the content is long or detailed, create a separate file (or directory) in
   the same month directory and keep a short summary plus a link in the week
-  file. Never write the detail only into a project document.
-- Meeting records follow the same rule: the summary goes in the current week's
-  file. Do not treat a project meeting note (e.g. `00-meeting.md`) as the new
-  home for a meeting record.
+  file. A meeting record follows the same rule. A project note such as
+  `00-meeting.md` does not become the home for that record.
 
 ## The project directory is the source of truth for anything installed outside it
 
@@ -304,60 +240,30 @@ Confirmed by the user on 2026-11-08.
 
 ## Reading the public internet needs no confirmation
 
-**Standing permission.** Running `curl` (or any read-only HTTP fetch, including
-the `web_search` / `web_fetch` tools) against public data is whitelisted: do not
-ask before it, do not add an "if you want me to" hedge, and do not present it as
-a risk. State the URL and the fetch time in the answer.
+Read a public URL (`curl`, `web_search`, `web_fetch`) without asking, and state
+the URL and the fetch time in the answer.
 
-This covers reads. It does not authorise writes to third-party services,
-purchases, or sending mail — those still need a direct request.
+Writes to third-party services, purchases, and sending mail still need a direct
+request.
 
 ## A lookup repeated across sessions needs an on-disk cache, not memory
 
-Model context dies with the session, so "you asked this an hour ago" is not
-available in the next conversation unless the value was written down. When a
-repo ships a cache helper, use it rather than the vendor API:
+A value that lives only in the conversation is gone when the session ends. When
+a repo ships a cache helper, call it instead of the vendor API.
 
-```sh
-python3 scripts/weather-cache.py --place 武汉 --days 3   # winnie
-```
+The helper returns the payload and its age. Say when the data was fetched. A
+hit does no network call. When the entry is stale, the refresh failed — say so
+and retry.
 
-The helper must return the payload **and** its age (`cache.note`), so the reply
-can say "数据取自 12:03，8 分钟前" instead of implying live data. A hit means no
-network call; `cache.stale: true` means the entry expired and the fetch failed —
-say so and retry.
+Key a new cache on the question's identity (coordinates rounded, window, local
+date, timezone), not on the raw question text. Store an explicit TTL per data
+shape, prune on write, and store `fetched_at` with the payload. A "today" cache
+keyed without the date serves yesterday.
 
-**Design rule for a new cache** (this is the part worth copying): key on the
-question's identity (coordinates rounded, window, local date, timezone — never on
-the raw question text), store an explicit TTL per data shape, prune on write, and
-never cache a payload without its `fetched_at`. A "today" cache keyed without the
-date will serve yesterday's forecast, which is worse than no cache at all.
+## Update a todo list before the reply
 
-## A todo list nobody updates is a false progress report
-
-**Signal.** The owner asks why the task panel still says "1 进行中，6 待处理"
-after the turn that created it finished, tested and committed everything. The
-entries were all real; only the panel was stale, because `todo_write` was called
-once at the start of the turn and never again.
-
-**Why it matters more than it looks.** The panel is the only progress signal the
-owner sees while the turn runs. A list frozen at its opening snapshot claims work
-is unstarted that has already shipped, and it sends them looking for a stuck job
-that does not exist — in this case the first hypothesis was a wedged app queue
-(no Redis listener, no such counter in the console: it was the agent's own list).
-
-**Check.** Treat `todo_write` as paired calls: one to open the plan, and one final
-call before the closing reply in which **nothing** is `in_progress` or `pending`.
-If the turn used a plan at all, the last state must describe the turn as it
-actually ended. Flip each item to `completed` when its work lands, not in one
-batch at the end, so the panel stays true while it is being watched.
-
-**Distinguish it from a real queue before investigating.** Asked about "进行中"
-counts, confirm whose counter it is: an app-side job queue has a listener, a
-table or a log behind it, and the number can be reproduced from one of them; a
-stale plan has neither, and its counts match the number of items the agent wrote
-down. One `grep` for the exact label and one `ss -ltn` settle which is which
-before any debugging starts.
+If a turn opened a plan, mark each item completed when its work lands. The last
+update before the reply has nothing `in_progress` or `pending`.
 
 ## Every diagnosis ends with a written lesson
 
@@ -365,10 +271,7 @@ A troubleshooting session is not finished until the lesson is written down.
 The user asked for this explicitly: it is part of the work, not an optional extra.
 
 - **Global** (this machine, a tool, the sandbox, a protocol, or a way of
-  working that applies to any project): add `~/.agents/lessons/<slug>.md` and
-  one bullet under [Lessons](#lessons). The bullet starts with the exact error
-  string or command. The file holds the signal, the cause, the check, and the
-  fix. Do not paste that file into this document.
+  working that applies to any project): file it under [Lessons](#lessons).
 - **Project** (`docs/decisions.md`, or the project's own memory file) when the
   lesson is about this code, this schema, or this domain.
 - Both, when a general lesson was learned from a specific incident.
@@ -390,16 +293,13 @@ The user asked for this explicitly: it is part of the work, not an optional extr
 
 ## Lessons
 
-A diagnostic note grows this list by one bullet. A rule that applies on
-every turn is a new section above, not a bullet here. When a failure
-matches a bullet, read the named file before changing code, config, or the
-diagnosis. The bullet is the action. The file is the procedure, the
-commands, and the negative results.
+When a failure matches a bullet, read the named file before changing code,
+config, or the diagnosis. The bullet is the action. The file is the procedure,
+the commands, and the negative results.
 
-Add a global lesson by creating `lessons/<slug>.md` and appending one bullet
-here. Lead the bullet with the exact error string or command. Do not paste
-the lesson body into this file. Delete a lesson by removing the bullet and
-the file together.
+Append one bullet here, and put the body in `lessons/<slug>.md`. Lead the
+bullet with the exact error string or command. Delete a lesson by removing the
+bullet and the file together.
 
 - `connect to host <ip> port 22: Connection timed out` for `47.237.217.143` (`sctest.hosts.d3v.cn`), `106.75.145.225` (`newapi-cn-201.hosts.d3v.cn`), or `52.9.253.68` (`newapi-us-101.hosts.d3v.cn`) — whitelist kept by 孔俊, not sshd. Confirm IPv4 with `curl -4 -s https://myip.ipip.net`, report it, and stop retrying. `lessons/company-ip-whitelist.md`
 - `Bad owner or permissions on /etc/ssh/ssh_config.d/20-systemd-ssh-proxy.conf` — `ssh -F ~/.ssh/config`. `lessons/ssh-config-owner.md`
@@ -429,3 +329,5 @@ the file together.
 - Capture RMS looks fine but the 300–3000 Hz band does not move — the input gain is up around +60 dB; measure the speech band. `lessons/mic-gain-speech-band.md`
 - A documented option is set and nothing happens — grep the library for reads of that name, not the assignment. `lessons/documented-option-unread.md`
 - A failed form save redirects and the typed values are gone — re-render with the submitted non-secret fields. `lessons/redirect-on-validation-loses-input.md`
+- Files just edited show up in another commit's diff, or `git status` flips between two change sets — the other session ran `git add -A`. Stage explicit paths. `lessons/second-session-git-add.md`
+- The task panel still lists work in progress after the turn finished — the plan was never updated. Close every item before the reply. `lessons/todo-list-stale.md`
