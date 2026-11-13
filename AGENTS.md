@@ -8,7 +8,10 @@ defaults unless a project's own `AGENTS.md` explicitly overrides them.
 This file is loaded on every turn.
 
 - A rule that should change behaviour on every turn is a new section above Lessons.
-- A diagnostic note is a file in `~/.agents/lessons/` plus one bullet under Lessons. Read that file when its bullet matches.
+- A diagnostic note about this machine or any project is a file in
+  `~/.agents/lessons/` plus one bullet under Lessons. Read that file when its
+  bullet matches. A note about one project's code or schema goes in that
+  project's `docs/lessons/`, not in this file.
 
 ## Language
 
@@ -265,16 +268,32 @@ keyed without the date serves yesterday.
 If a turn opened a plan, mark each item completed when its work lands. The last
 update before the reply has nothing `in_progress` or `pending`.
 
-## Every diagnosis ends with a written lesson
+## Close the turn with what went wrong
 
-A troubleshooting session is not finished until the lesson is written down.
-The user asked for this explicitly: it is part of the work, not an optional extra.
+Confirmed by the user on 2026-11-13.
+
+End every turn with a short account of the problems this turn actually hit and
+the lesson each one produced. A turn that hit nothing says so in one line and
+writes no file.
+
+Write a file only when a later run would do the wrong thing without it, and no
+existing lesson already covers the same signal. Search `~/.agents/lessons/` and
+the project's `docs/lessons/` for the error string before adding one. The file
+name and the opening line are the signal. Do not keep a second index that
+copies them.
 
 - **Global** (this machine, a tool, the sandbox, a protocol, or a way of
-  working that applies to any project): file it under [Lessons](#lessons).
-- **Project** (`docs/decisions.md`, or the project's own memory file) when the
-  lesson is about this code, this schema, or this domain.
-- Both, when a general lesson was learned from a specific incident.
+  working that applies to any project): `~/.agents/lessons/<slug>.md` plus one
+  bullet under [Lessons](#lessons). That pair is the global memory.
+- **Project** (this code, this schema, this domain): `docs/lessons/<slug>.md`
+  at the repository root. Create the directory on first use. If the project
+  already keeps lessons in one named file, append there instead of opening a
+  second home.
+- Both, when a general lesson was learned from a specific incident. The global
+  file keeps the reusable check. The project file keeps the paths, ids, and
+  schema. Each links to the other.
+- A lesson does not replace the weekly work note. The note records that the
+  work happened. The lesson records the check that prevents a repeat.
 - **Write the generalisable part, not the incident.** "The `demo` migration used
   the wrong collection name" is a bug report. "A guard that returns nil on a
   missing name turns a typo into a silent no-op; a migration whose subject is that
@@ -287,9 +306,8 @@ The user asked for this explicitly: it is part of the work, not an optional extr
   attempt. A dead end that is written down is a finding.
 - **Include the exact command, path or error string** that identifies the problem.
   The next reader is usually a machine, and a paraphrase is not searchable.
-- Before finishing a turn in which something was diagnosed, ask: *what did I learn
-  that I did not know when I started, and where will that be read again?* If the
-  answer is nowhere, the diagnosis is not finished.
+- In the reply, name the file written. When nothing was written, say whether the
+  turn hit nothing or an existing lesson already covers it, and name that lesson.
 
 ## Lessons
 
