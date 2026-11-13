@@ -278,14 +278,15 @@ writes no file.
 
 Write a file only when a later run would do the wrong thing without it, and no
 existing lesson already covers the same signal. Search `~/.agents/lessons/` and
-the project's `docs/lessons/` for the error string before adding one. The file
-name and the opening line are the signal. Do not keep a second index that
-copies them.
+the project's `docs/lessons/` for the error string before adding one. Name the
+file `YYYYMMDD-<slug>.md`: the date is the day the lesson was learned, and the
+slug is the signal, matching the opening line. Lessons already on disk without
+a date prefix keep their names. Do not keep a second index that copies them.
 
 - **Global** (this machine, a tool, the sandbox, a protocol, or a way of
-  working that applies to any project): `~/.agents/lessons/<slug>.md` plus one
-  bullet under [Lessons](#lessons). That pair is the global memory.
-- **Project** (this code, this schema, this domain): `docs/lessons/<slug>.md`
+  working that applies to any project): `~/.agents/lessons/YYYYMMDD-<slug>.md`
+  plus one bullet under [Lessons](#lessons). That pair is the global memory.
+- **Project** (this code, this schema, this domain): `docs/lessons/YYYYMMDD-<slug>.md`
   at the repository root. Create the directory on first use. If the project
   already keeps lessons in one named file, append there instead of opening a
   second home.
@@ -315,7 +316,7 @@ When a failure matches a bullet, read the named file before changing code,
 config, or the diagnosis. The bullet is the action. The file is the procedure,
 the commands, and the negative results.
 
-Append one bullet here, and put the body in `lessons/<slug>.md`. Lead the
+Append one bullet here, and put the body in `lessons/YYYYMMDD-<slug>.md`. Lead the
 bullet with the exact error string or command. Delete a lesson by removing the
 bullet and the file together.
 
