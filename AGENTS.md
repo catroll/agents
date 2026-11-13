@@ -1493,3 +1493,26 @@ list before committing; commit small, verified slices early instead of leaving a
 large dirty tree; for a long independent task, work in a separate worktree or
 branch (`create_worktree`). Put what belongs to the change set in the commit
 body, because the file list may later prove incomplete.
+
+## Every software project ships a Makefile with `make help`
+
+Confirmed by the user on 2026-11-13. Applies to every software project, new or
+existing, whatever the language.
+
+- A top-level `Makefile` is mandatory and is committed with the project.
+- `make` with no arguments (set `.DEFAULT_GOAL := help`) and `make help` both
+  print the available targets, one line of description each. Order or group
+  them so build / test / run / check / clean are obvious.
+- Keep it self-documenting and dependency-free: append `## description` after
+  each target line and extract those lines with awk/grep over
+  `$(MAKEFILE_LIST)`; do not require Python, jq or an extra help tool.
+- Cover at least: help, build, test, format, format-check (or lint), vet (or
+  the stack's equivalent), run/dev, clean. Add project-specific targets
+  (config bootstrap, migrations, code generation) only where they earn their
+  place; do not invent targets that are not real commands.
+- Use `?=` for overrides (`BIN`, `CONFIG`, `GO`, ...), never hard-code absolute
+  paths, and make bootstrap/config targets idempotent and non-destructive:
+  create missing files from examples, never overwrite a live config.
+- Test the targets themselves — `make`, `make help`, `make check`/`make test`,
+  and a bootstrap target on a clean checkout — not just the commands they wrap.
+  If a target is documented in `make help`, it must have been run at least once.
