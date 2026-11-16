@@ -78,6 +78,8 @@ Installed 2026-11-17 from the Tencent News hub as zip packages (`https://mat1.gt
 - Binary: `~/.tencent-news-cli/bin/tencent-news-cli`, on `PATH` through `TENCENT_NEWS_INSTALL` in `~/.zshrc`.
 - API key: set once with `tencent-news-cli apikey-set <KEY>`; it persists to the shell RC file. `sh scripts/cli-state.sh` is the read-only check (`cliExists`, `apiKey.status`); call it before a business query and never copy the key out of the RC file.
 - Updating: `tencent-news-cli update --force`, then verify `version` reports `need_update: false`. Version 1.0.23 is installed; checksums for each release are published next to the binary under `hub/<version>/checksums.txt`.
+- Gold and other commodities: `stock quote` is not stock-only. It resolves 上海金 AU9999 (CNY/g), 伦敦金 AUUSDO (USD/oz), 沪金 futures (AU0I00.SHF), gold ETFs such as 518880, and brand-jewellery / recycling prices (CNY/g). Phrase the query plainly (`黄金价格`, `伦敦金现价`): on 2026-11-17 `上海金 Au99.99 近一年` was mis-resolved to the Shanghai index. History arrives as the last few rows with the middle elided, and the payload explicitly forbids filling that gap.
+- Calls cost credits and are rate-limited server-side: the key page grants credits on sign-in (with expiry, topped up by packs after a standard plan) and the service defines error code 8 `超过频率限制`. No QPS or per-day count is published for a key, and the CLI neither throttles nor caches. The only hard number in the skill docs is fact-checking at 3 per day. A generic failure is a failure, not "quota exhausted", unless the message says so.
 
 | Skill | CLI entry point | What it does |
 | --- | --- | --- |
