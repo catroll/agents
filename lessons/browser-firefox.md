@@ -70,3 +70,24 @@ alone when a browser could settle it.
   recoverable move is to kill that Firefox (by the pid you started) and relaunch;
   the durable one is to end the session in `finally`.
 
+- **BiDi commands take the browsing context id, not the session id.**
+  `session.new` returns `{sessionId}`; `browsingContext.getTree` returns
+  `contexts[].context`. Use that second id in `script.evaluate`
+  (`target: {context}`), `browsingContext.captureScreenshot` and
+  `input.performActions` (`context`). Passing the session id fails with
+  `no such frame: Browsing Context with id <session-id> not found`, and
+  `getTree`/`navigate` succeeding makes it look like the page is the problem.
+- **Headless Firefox cannot verify `:focus` / `:focus-within` styles.**
+  It reports `document.hasFocus() === false` and `document.activeElement` set at
+  the same time; `el.matches(':focus')` and `.closest('.x').matches(':focus-within')`
+  stay `false`, so the focused computed colour equals the idle one and reads as a
+  CSS bug. Use headless Chromium (`/usr/bin/microsoft-edge --headless=new
+  --remote-debugging-port=9223`) over CDP (`GET /json/list` → page
+  `webSocketDebuggerUrl`, then `Page.navigate`, `Input.dispatchMouseEvent`,
+  `Runtime.evaluate`) where `document.hasFocus()` is `true` and the state is real.
+- **A CSS harness must load every stylesheet the page loads, in page order.**
+  Loading only the sheet being edited can miss a more specific rule from another
+  sheet: `.article-tag a { text-decoration: none }` lost to
+  `.markdown-body a:hover { text-decoration: underline }` in
+  `github-markdown.css`, so idle looked correct and hover underlined. Assert the
+  computed state (`getComputedStyle(el).textDecorationLine`), not only the colour.

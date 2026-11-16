@@ -1,5 +1,11 @@
 # GitHub Releases are ~25 KB/s here, and a timed-out download leaves a plausible file
 
+**First, try the proxy.** `bash -c 'source ~/.proxyrc; curl -L -o <file> <url>'`
+moved the same kind of `codeload.github.com` tarball from 628 KB/s (cut off) to
+5.2 MB/s (complete) on 2026-11-15. See
+`lessons/20261115-foreign-host-network-use-proxyrc.md`. The rest of this note
+applies when the proxy is down or the asset is too large even through it.
+
 **Signal.** A `curl -m 300` of a 49 MB release asset ends with exit code 28
 (timeout) and a 7 MB file; a `-m 600` retry of a 38 MB model reaches 15 MB.
 `ls -l` shows a real file, so the next step (`unzip -l`, `tar xf`) runs on a

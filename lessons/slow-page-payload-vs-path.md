@@ -60,3 +60,18 @@ here the backend produced 903,492 B and `gzip -9` only reached 894,805 B (1 %), 
 nginx-side compression was pointless. A whole class of "optimisations" evaporates
 once you measure the number first.
 
+**Changing the sender's congestion control is not a fix for peering loss.** The
+tempting next step after "cubic collapses to cwnd 2" is `tcp_congestion_control=bbr`
+on the server. A/B it before keeping it: six 100 KB samples per arm on the same
+lossy path gave cubic 11.7 KB/s mean vs BBR 9.2 KB/s — no win, because the loss is
+random peering damage, not a capacity signal. Two samples cannot resolve this
+(variance here was 5–17 KB/s); use several short ranges and compare the means, then
+revert. The module loads, the sysctl is host-wide, and neither improves the path.
+
+**"Extract the statics to nginx" is not a path fix.** Same host + same wire = same
+throughput; the extraction only pays if it changes something else: a better path
+(CDN/other host), more parallel connections (split the one bundle the browser
+serialises), or a smaller encoding (brotli/zstd needs a custom nginx build). Check
+the server first — a 0.66 s TTFB and a 3.36 MB body is a transport problem, not a
+web-server problem.
+
