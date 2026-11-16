@@ -249,6 +249,19 @@ the URL and the fetch time in the answer.
 Writes to third-party services, purchases, and sending mail still need a direct
 request.
 
+## TLS certificates: use the local ACME setup
+
+A working ACME client already exists on this machine; do not reach for certbot,
+self-signed certs, or a new CA unless the local setup cannot serve the case.
+
+- Client: `~/.acme.sh/acme.sh` (not on `PATH`), account config `~/.acme.sh/account.conf`.
+- Issue with Aliyun DNS:
+  `~/.acme.sh/acme.sh --issue --dns dns_ali -d <domain> --server letsencrypt --keylength 2048`
+- Outputs under `~/.acme.sh/<domain>/`: `fullchain.cer`, `<domain>.key`, `ca.cer`.
+- Renewal is the existing daily 21:10 `acme.sh --cron`; upload/deploy is the weekly
+  `scripts/coder/sync_acme_certs.sh` (dry-run supported).
+- Details and the synced certificate list: `docs/coder/tracking-domain-certs.md`.
+
 ## A lookup repeated across sessions needs an on-disk cache, not memory
 
 A value that lives only in the conversation is gone when the session ends. When
@@ -267,6 +280,27 @@ keyed without the date serves yesterday.
 
 If a turn opened a plan, mark each item completed when its work lands. The last
 update before the reply has nothing `in_progress` or `pending`.
+
+## Progress is written into the owning document as it lands
+
+A plan that lives only in the conversation is lost with the session, and a plan
+that is not updated is wrong. The owner reads the document, not the chat.
+
+- Every plan item has **one owning document** — a roadmap, a design doc, an
+  issue, a TODO section. When the item starts, finishes, or becomes blocked,
+  update that document **in the same turn**. A reply message is not the record
+  and is not a substitute.
+- The update carries the **date, what changed, the evidence** (the command, file
+  or result that proves it), and **what remains with the gate that closes it**.
+  A bare status word ("partly done") is not an update.
+- Keep it truthful in both directions: a plan must not list shipped work as
+  pending, and a design doc must not describe an unimplemented feature as if it
+  existed. Re-read the section before the closing reply and make the checkboxes
+  match reality.
+- If a plan does not exist yet, create the owning document before starting the
+  work, so the next session inherits the state.
+- The owner may not notice a completed item unless the document says so; that is
+  the whole point of writing it down.
 
 ## Close the turn with what went wrong
 
@@ -326,7 +360,7 @@ bullet and the file together.
 - `Node.js is not compiled with TypeScript support` — the workflow tool cannot run; use a subagent, at most 8 at a time. `lessons/workflow-tool-no-typescript.md`
 - `[killed by signal: SIGTERM]` from `pkill -f` / `pgrep -f` — the pattern matched the shell running it. Kill by pid in a separate call. `lessons/pkill-matches-shell.md`
 - Cron entry present, log says `make: uv: 没有那个文件或目录`, or a `%` in the crontab command produces no output — cron's PATH and `%` handling. `lessons/cron-path-and-percent.md`
-- GitHub Release `curl` exits 28 and leaves a short archive (~25 KB/s here) — compare the file size with `assets[].size` before extracting. `lessons/github-release-slow-truncated.md`
+- GitHub Release `curl` exits 28 and leaves a short archive (~25 KB/s here) — retry through `source ~/.proxyrc` first (5.2 MB/s measured), then compare the file size with `assets[].size` before extracting. `lessons/github-release-slow-truncated.md`
 - ImageMagick SVG exits 0 but strokes are gone (`rsvg-convert` is not installed) — rasterise with headless Firefox. `lessons/svg-imagemagick-stroke.md`
 - Driving a browser, taking a screenshot, or concluding that no browser is available — read `lessons/browser-firefox.md` before deciding. `Failed to decode request as JSON`, or a `window.confirm` that vanishes: `lessons/webdriver-empty-body.md`. CDN assets with `responseStatus: 0`, or two unrelated files sharing one SRI hash: `lessons/firefox-cannot-fetch-cdn.md`.
 - "The page is slow" — measure which file, then payload versus path, before editing nginx. `lessons/slow-page-payload-vs-path.md`
@@ -357,3 +391,20 @@ bullet and the file together.
 - A build differs only by an environment-only flag (e.g. `GOEXPERIMENT=jsonv2`) and `go build`/`go test` without it pass silently, or two intended-different builds are byte-identical — define the flag once (Makefile), thread it through build/test/vet/run, and assert it via symbols (`go tool nm | grep encoding/json/v2` on an unstripped build) or a size/benchmark delta; `go.mod` cannot carry build flags. `lessons/20261113-goexperiment-build-flag-silent-fallback.md`
 - `/bin/sh: Syntax error: word unexpected (expecting ")")` on a Makefile `case` default `*)` — dash expands the star. Do not use a star default; match the known arms and test the variable. `"*")` still failed `dash -n` here. `lessons/20261114-dash-case-star-glob.md`
 - `/bin/sh: Syntax error: end of file unexpected (expecting "fi")` after a `#` comment in a continued Makefile recipe — make drops the rest of the logical line. Keep the note above the target. `make -n` still prints the lost lines. `lessons/20261114-make-recipe-hash-comment.md`
+- `uv: 未找到命令` (`uv: command not found`) from the agent bash shell, while `ls -l ~/.local/bin/uv` shows a working pipx install — the harness `PATH` omits `~/.local/bin`; run `.venv/bin/python main.py …` or prepend `PATH="$HOME/.local/bin:$PATH"` for that command, do not reinstall. `lessons/20261114-uv-missing-from-harness-path.md`
+- A commit message loses a backticked word and the shell prints `bash: 行 1: summary_explicit: 未找到命令` — backticks inside a double-quoted `git commit -m` run command substitution; pass the message via `git commit -F -` with a quoted heredoc, and check `git log -1 --format=%B`. `lessons/20261114-backticks-in-double-quoted-commit-message.md`
+- A filename-driven pagination check reports hundreds of "too many articles per page" violations after a page-size change — a generic `(.*?)(?:-(\d+))?\.html` regex turns `date/2026-10-01.html` into page 1 of key `2026-10` (the day); match the full key shape first (`^(\d{4}-\d{2}-\d{2})(?:-(\d+))?\.html$`) and sanity-check one known file before editing working code. `lessons/20261114-pagination-suffix-regex-date-pages.md`
+- Generated-HTML row checks report sporadic "missing content" after adding rich summaries — a lazy `<li …>(.*?)</li>` stops at a nested `<ul><li>` inside the row and `<div class="…">(.*?)</div>` stops at a summary's own `<div>`; split on the item marker and assert the expected fragment is embedded verbatim instead. `lessons/20261114-generated-html-row-regex-nested-li.md`
+- An async script finishes downloading at 340 ms but its DOM effect lands at 5,165 ms with a later synchronous `<script src>` — "async" does not isolate a script from parser-blocking scripts; measure the effect with a `MutationObserver` (BiDi preload) and make the later bundle `defer`/`async` or remove it. `lessons/20261115-async-script-waits-for-parser-blocking.md`
+- Generated YAML contains `&id001` / `*id001` anchors because one dict was reused for two nodes — PyYAML dumps object identity; use a Dumper with `ignore_aliases` and assert `'&id' not in text`. A generator that writes a template value as a raw f-string twice evaluates the random twice; reference the suite variable. `lessons/20261116-pyyaml-dump-aliases.md`
+- Two runs of the same analysis disagree (989 vs 967) with no code change — the input is a *generated* file (recomputed `tested` flags) regenerated in between; fingerprint the input (sha256 + mtime) in the report and never compare across fingerprints. The same turn: a doc already dirty from another session shows ` M`; adding your hunk makes `git add <file>` take their work too, so put it in a new file. `lessons/20261116-generated-input-changed-between-runs.md`
+- A generator's file count shrinks on the second run (113 → 93) and its last output is deleted — selection reads a ledger that the annotate step recomputes from the generator's own files; exclude self-generated evidence (tag it, filter it) and prove idempotency by running the generator twice and asserting `written₂ == written₁ and removed₂ == []`. `lessons/20261116-generator-selection-feedback-loop.md`
+- A dependency install or download from an overseas host stalls or ends in `curl` exit 28 / `dial tcp […]:443: connect: connection timed out`, while `env | grep -i proxy` in the harness shell prints nothing — every `bash` call is a fresh shell and starts with no proxy; run `bash -c 'source ~/.proxyrc; <command>'` and retry before switching to a mirror. `lessons/20261115-foreign-host-network-use-proxyrc.md`
+- `grep -rn … .` returns one megabyte-long line and `grep: 写入错误: 断开的管道` — the search root included `.cache/` (31 MB) and `.venv/` (135 MB); exclude those directories in the command itself (or use the grep tool with `include`), a later `grep -v` is too late. `lessons/20261116-grep-over-cache-dumps.md`
+- One skill CLI returns `<urlopen error [Errno 110] Connection timed out>` while a sibling script calls the same domain fine, and a retry reproduces it — the failing script has its own `os.environ.get("CLAWX_BASE_URL", …)` default pointing at an unroutable pre host (`https://clawx-pre.jd.com`); grep each script's default and export `CLAWX_BASE_URL=https://youqian.jd.com` in the profile instead of patching vendor code. `lessons/20261116-skill-cli-pre-host-default.md`
+- `clawx-market-query` main CLI returns `"answers": "我暂时没有相关数据"` for a 1-year trend — `jask/query` is snapshot-only; query `cli_backup.py` with `近一年现货价格` / `近一年收盘价`, read `chunks_info` because `伦敦金` resolves to 0 rows and `上海金`/`黄金` silently become 纽约金/沪金. `lessons/20261116-clawx-gold-history-via-backup.md`
+- `ModuleNotFoundError: No module named 'config'` in a wrapper that set `os.environ["PYTHONPATH"]` before importing — `sys.path` is fixed at interpreter start; `sys.path.insert(0, root)` in-process (or `PYTHONPATH=… python`), not `os.environ`. `lessons/20261116-pythonpath-runtime-not-syspath.md`
+- `git status --porcelain` paths come back one character short (`oody/...` instead of `woody/...`) — the helper called `.strip()` on the whole output, eating the first line's leading `XY` space; keep porcelain raw and slice `line[3:]`. `lessons/20261116-porcelain-status-strip.md`
+- `429` + HTML `Error - Request Blocked` from `platform.deepseek.com/api/v0/usage/...` — the HWWAF rate limit (5 calls in ~2 min was enough), not an expired Bearer token; an API-level rejection answers JSON `{"code":...}`, the block lasts ~15 min, and bucket granularity comes from the window length (`<=24h` gives `bucket:3600`), not from a `bucket=` param. `lessons/20261116-deepseek-usage-waf-429.md`
+- A unit that `Wants=` a retired unit keeps starting it on every timer tick (`systemctl disable` does not stop `Wants`), and `/api/status` returning the expected version does not prove *your* new slot owns the port — after splitting a service into slots, grep every unit for `Wants`/`Requires`/`After` on the old name, compare `ss`'s listener pid with `systemctl show -p MainPID`, and give the post-`reload` smoke a retry window. `lessons/20261116-bluegreen-cutover-checks.md`
+- `{"success": false, "code": "429", "message": "该skill今日调用额度已达上限(50次)"}` with HTTP 200 from two different ClawX skills — the 50/day counter is per API key, shared across skill codes; cache series to disk, do not fan out synonym probes, and treat the value as of its timestamp once the quota is gone. `lessons/20261116-clawx-skill-daily-quota-429.md`
