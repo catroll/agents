@@ -2,7 +2,7 @@
 
 Human index of the agent skills in this directory. Each skill is a folder whose `SKILL.md` description is what an agent matches against. This file is not loaded as a skill.
 
-Catalogued 2026-11-13. 142 directories.
+Catalogued 2026-11-17. 151 directories.
 
 ## Inventory
 
@@ -20,9 +20,10 @@ Catalogued 2026-11-13. 142 directories.
 | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | 1 | Web Interface Guidelines review |
 | [vercel-labs/skills](https://github.com/vercel-labs/skills) | 1 | Finding skills to install |
 | agent.qq.com | 1 | Mail via agently-cli |
-| Local, not in `.skill-lock.json` | 6 | Notes, schedule, news, logos, repos |
+| [mat1.gtimg.com Tencent News hub](https://mat1.gtimg.com/qqcdn/qqnews/cli/hub/) | 10 | News, fact-check, weather, sports, gaokao, stock, heritage |
+| Local, not in `.skill-lock.json` | 5 | Notes, schedule, logos, repos |
 
-136 entries are pinned in `.skill-lock.json`. These six are on disk only: `local-knowledge`, `raster-to-arcs`, `repotracker`, `tencent-news`, `winnie-schedule`, `wlb-work-notes`. A reinstall from the lock does not restore them. `repotracker` is a symlink to `~/Projects/Mine/WLB/tools/repotracker`.
+136 entries are pinned in `.skill-lock.json`. Fifteen are on disk only: `local-knowledge`, `raster-to-arcs`, `repotracker`, `tencent-news`, `winnie-schedule`, `wlb-work-notes`, and the ten Tencent News skills listed below. A reinstall from the lock does not restore them. `repotracker` is a symlink to `~/Projects/Mine/WLB/tools/repotracker`.
 
 ## Review
 
@@ -69,6 +70,29 @@ Tied to this machine. Six of these are outside the lock file; `agently-mail` is 
 | [tencent-news](tencent-news/SKILL.md) | News, fact-check, weather, sports fixtures, and gaokao admission data. |
 | [winnie-schedule](winnie-schedule/SKILL.md) | Read and edit the weekly schedule files in the WLB work tree. |
 | [wlb-work-notes](wlb-work-notes/SKILL.md) | Name and place work notes and reports under WLB `work/`. |
+
+## Tencent News skills
+
+Installed 2026-11-17 from the Tencent News hub as zip packages (`https://mat1.gtimg.com/qqcdn/qqnews/cli/hub/<name>.zip`). Every one of them is a thin wrapper over the shared `tencent-news-cli` binary and the same API key, so the CLI is a single machine-wide dependency, not one per skill.
+
+- Binary: `~/.tencent-news-cli/bin/tencent-news-cli`, on `PATH` through `TENCENT_NEWS_INSTALL` in `~/.zshrc`.
+- API key: set once with `tencent-news-cli apikey-set <KEY>`; it persists to the shell RC file. `sh scripts/cli-state.sh` is the read-only check (`cliExists`, `apiKey.status`); call it before a business query and never copy the key out of the RC file.
+- Updating: `tencent-news-cli update --force`, then verify `version` reports `need_update: false`. Version 1.0.23 is installed; checksums for each release are published next to the binary under `hub/<version>/checksums.txt`.
+
+| Skill | CLI entry point | What it does |
+| --- | --- | --- |
+| [tencent-news](tencent-news/SKILL.md) | `hotspot`, `search`, `morning`, `evening`, `jiaozhen`, `weather`, `sport`, `gaokao` | All-in-one news, fact-check, weather, sports, gaokao. Help-driven, so it follows the installed CLI. |
+| [tencent-news-hotspot](tencent-news-hotspot/SKILL.md) | `hotspot premium` | Curated articles per channel (27 channels, `hotspot channels` lists them). |
+| [tencent-news-financial-assistant](tencent-news-financial-assistant/SKILL.md) | `stock quote` | Live and historical quotes: open, high, low, close, change, volume. |
+| [tencent-jiaozhen-verified-sources](tencent-jiaozhen-verified-sources/SKILL.md) | `knowledge search` | Trusted-source knowledge base; returns the service result verbatim. |
+| [jiaozhen-factcheck](jiaozhen-factcheck/SKILL.md) | `jiaozhen` | Fact-checks a claim and returns a verdict with a confidence score. |
+| [tencent-weather](tencent-weather/SKILL.md) | `weather` | Current conditions, daily and hourly forecast, air quality, life indices. |
+| [tencent-weather-alert](tencent-weather-alert/SKILL.md) | `weather-alarm` | Weather alerts for a place and its neighbours. |
+| [tencent-news-sports-schedule](tencent-news-sports-schedule/SKILL.md) | `sport tab-list`, `sport match-list` | Fixtures, scores, and stream links for the supported competitions. |
+| [tencent-gaokao-college-application](tencent-gaokao-college-application/SKILL.md) | `gaokao …` | Score segments, province lines, college and major admission data, reach/match/safety plans. |
+| [tencent-news-world-heritage](tencent-news-world-heritage/SKILL.md) | `wiyun` | UNESCO World Heritage and intangible cultural heritage Q&A. |
+
+The all-in-one `tencent-news` package predates the split: the hub still serves its 2026-09-16 zip (v1.3.1), whose news section tells the agent to read `run-cli.sh help` first instead of hardcoding a subcommand. That matters because CLI 1.0.23 removed the old `hot` command in favour of `hotspot premium --channel <name>`; nothing needs editing, the agent just resolves the subcommand from help. The nine split skills overlap with it on weather, alerts, sport, gaokao, and fact-checking; their narrower descriptions usually win the match, and both paths reach the same CLI.
 
 ## Discovery
 

@@ -1,0 +1,28 @@
+{
+  "name": "tencent-jiaozhen-verified-sources",
+  "description": "腾讯较真可信知识服务，通过腾讯新闻 CLI 的 knowledge search 命令查询政策规定、办事流程、公共服务、法律法规、公共健康常识、官方口径等可信源信息，并按服务返回的结果原样输出，不重新组织、摘要、改写或转述成另一版答案。当用户询问政策规定、办事流程、公共服务、法律法规、公共健康常识、官方口径，或希望「查权威来源」「有没有官方说法」「可靠的答案是什么」时使用。CLI 输出为空或命令失败时立即停止，不通过 WebSearch 或其他数据源补做查询。",
+  "version": "1.0.0",
+  "displayName": {
+    "zh-CN": "腾讯较真可信知识服务",
+    "en-US": "Tencent Jiaozhen Trusted Knowledge Service"
+  },
+  "examples": [
+    "故宫的开放预约政策是什么？",
+    "成人每天应摄入多少盐？",
+    "OpenAI 最新模型是什么？"
+  ],
+  "examplesEn": [
+    "What is the Palace Museum's reservation policy?",
+    "How much salt should an adult consume per day?",
+    "What is OpenAI's latest model?"
+  ],
+  "owners": [
+    "joesonqiao"
+  ],
+  "cli": {
+    "mode": "new",
+    "name": "tencent-news-cli",
+    "integrationDoc": "references/cli-integration.md",
+    "changeRef": "tencent-news-cli v1.0.18（build 2026-10-28T11:33:51，test 渠道）新增 knowledge 命令（较真可信源知识库检索，子命令 search）；需求来源 TAPD 1010045201139443005 / 1010045201139029289；CLI 侧 MR/提交未获取"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "腾讯天气查询",
+  "slug": "tencent-weather",
+  "version": "1.0.10",
+  "installedAt": 1792654186202,
+  "source": "marketplace",
+  "examples_zh": [
+    "XX城市最近天气如何？",
+    "查询本地天气预报",
+    "明天会下雨吗？"
+  ],
+  "examples_en": [
+    "What's the weather like in <city> recently?",
+    "Check the local weather forecast",
+    "Will it rain tomorrow?"
+  ],
+  "description_zh": "基于腾讯天气API数据，为用户提供全面的气象查询服务。可获取实时天气、未来逐天预报、逐小时预报、空气质量、生活指数、日出日落等信息。当用户询问天气温度、空气质量、降水概率、风力、汽车限号时触发此技能。",
+  "description_en": "Comprehensive weather service powered by the Tencent Weather API, covering real-time conditions, daily and hourly forecasts, air quality, life indices and sunrise/sunset. Use when the user asks about temperature, air quality, chance of rain, wind, or vehicle license-plate restrictions.",
+  "iconSource": "tencent-weather"
+}

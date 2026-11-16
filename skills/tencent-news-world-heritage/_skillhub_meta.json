@@ -1,0 +1,20 @@
+{
+  "name": "文遗云图·知识库",
+  "slug": "tencent-news-world-heritage",
+  "version": "1.0.9",
+  "installedAt": 1794366594242,
+  "source": "marketplace",
+  "examples_zh": [
+    "中国世界遗产中哪些是自然遗产？",
+    "世界遗产的申报需要哪些材料？",
+    "世界遗产的申报流程是怎样的？"
+  ],
+  "examples_en": [
+    "Which of China's World Heritage sites are natural heritage sites?",
+    "What documents are needed to nominate a site for World Heritage status?",
+    "What is the process for nominating a site for World Heritage status?"
+  ],
+  "description_zh": "读懂世界遗产的随身顾问，支持查询 UNESCO 世界遗产（World Heritage）、人类非物质文化遗产（Intangible Cultural Heritage）名录。当你询问某处古迹/非遗项目在哪里、是否入选、入选年份、或近期有什么保护或修缮动态时使用。",
+  "description_en": "World Heritage knowledge base Q&A covering heritage sites, inscription, history, values, conservation and recent updates.",
+  "iconSource": "tencent-news-world-heritage"
+}

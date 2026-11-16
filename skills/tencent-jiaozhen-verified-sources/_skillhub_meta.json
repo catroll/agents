@@ -1,0 +1,36 @@
+{
+  "name": "腾讯较真可信知识服务",
+  "slug": "tencent-jiaozhen-verified-sources",
+  "version": "1.0.0",
+  "installedAt": 1793687230844,
+  "source": "marketplace",
+  "examples_zh": [
+    "故宫的开放预约政策是什么？",
+    "成人每天应摄入多少盐？",
+    "OpenAI 最新模型是什么？"
+  ],
+  "examples_en": [
+    "What is the Palace Museum's reservation policy?",
+    "How much salt should an adult consume per day?",
+    "What is OpenAI's latest model?"
+  ],
+  "description_zh": "腾讯较真可信知识服务，帮你查询政策法规、办事流程、公共服务和健康常识等信息，快速找到权威来源和官方说法。原样呈现可信源查询结果，让答案有据可查。",
+  "description_en": "Query the authorized Tencent Jiaozhen trusted knowledge service and return its result verbatim, without rewriting, summarizing or re-authoring the answer.",
+  "tag_zh": [
+    "较真",
+    "可信源",
+    "权威来源",
+    "政策查询",
+    "官方口径",
+    "知识库"
+  ],
+  "tag_en": [
+    "jiaozhen",
+    "trusted source",
+    "authoritative source",
+    "policy lookup",
+    "official statement",
+    "knowledge base"
+  ],
+  "iconSource": "tencent-jiaozhen-verified-sources"
+}

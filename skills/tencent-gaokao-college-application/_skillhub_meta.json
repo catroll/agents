@@ -1,0 +1,20 @@
+{
+  "name": "腾讯高考志愿填报",
+  "slug": "tencent-gaokao-college-application",
+  "version": "1.0.5",
+  "installedAt": 1792598172001,
+  "source": "marketplace",
+  "examples_zh": [
+    "北京562分文科能报哪些大学？",
+    "上海交通大学历年录取分数线",
+    "广西601分理科输出一份稳冲保方案"
+  ],
+  "examples_en": [
+    "Which universities can I apply to with 562 in liberal arts in Beijing?",
+    "Shanghai Jiao Tong University's admission score lines over the years",
+    "Build a reach/match/safety plan for a 601 science score in Guangxi"
+  ],
+  "description_zh": "\"面向中国普通高考常规批次考生的腾讯高考志愿填报工具。用于查询一分一段、省控线、院校或专业历年录取数据，以及根据省份、分数、位次、选科和偏好生成院校优先或专业优先的冲稳保志愿参考方案及 HTML 报告；涉及高考成绩、位次、院校专业录取线、招生计划、选科限制或志愿填报时应使用。\"",
+  "description_en": "\"Tencent Gaokao College Application: official admission-data queries and college-first or major-first reach-target-safety planning for regular-batch candidates.\"",
+  "iconSource": "tencent-gaokao-college-application"
+}
