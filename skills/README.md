@@ -2,7 +2,7 @@
 
 Human index of the agent skills in this directory. Each skill is a folder whose `SKILL.md` description is what an agent matches against. This file is not loaded as a skill.
 
-Catalogued 2026-11-17. 151 directories.
+Catalogued 2026-11-17. 152 directories.
 
 ## Inventory
 
@@ -21,9 +21,9 @@ Catalogued 2026-11-17. 151 directories.
 | [vercel-labs/skills](https://github.com/vercel-labs/skills) | 1 | Finding skills to install |
 | agent.qq.com | 1 | Mail via agently-cli |
 | [mat1.gtimg.com Tencent News hub](https://mat1.gtimg.com/qqcdn/qqnews/cli/hub/) | 10 | News, fact-check, weather, sports, gaokao, stock, heritage |
-| Local, not in `.skill-lock.json` | 5 | Notes, schedule, logos, repos |
+| Local, not in `.skill-lock.json` | 6 | Notes, schedule, logos, repos, nginx triage |
 
-136 entries are pinned in `.skill-lock.json`. Fifteen are on disk only: `local-knowledge`, `raster-to-arcs`, `repotracker`, `tencent-news`, `winnie-schedule`, `wlb-work-notes`, and the ten Tencent News skills listed below. A reinstall from the lock does not restore them. `repotracker` is a symlink to `~/Projects/Mine/WLB/tools/repotracker`.
+136 entries are pinned in `.skill-lock.json`. Sixteen are on disk only: `local-knowledge`, `raster-to-arcs`, `repotracker`, `nginx-errors`, `winnie-schedule`, `wlb-work-notes`, and the ten Tencent News skills listed below. A reinstall from the lock does not restore them. `repotracker` is a symlink to `~/Projects/Mine/WLB/tools/repotracker`; `nginx-errors` is one to `~/Projects/Mine/WLB/work/2026/Q3/09/20260921-newapi/skills/nginx-errors`.
 
 ## Review
 
@@ -59,12 +59,13 @@ Routers, when the task is "which skill?": `ask-matt` (Matt Pocock set), `using-a
 
 ## Local tools
 
-Tied to this machine. Six of these are outside the lock file; `agently-mail` is pinned.
+Tied to this machine. Seven of these are outside the lock file; `agently-mail` is pinned.
 
 | Skill | What it does |
 | --- | --- |
 | [agently-mail](agently-mail/SKILL.md) | Send, reply, search, and manage mail through agently-cli. |
 | [local-knowledge](local-knowledge/SKILL.md) | Search the owner's Markdown notes through the local-knowledge index. |
+| [nginx-errors](nginx-errors/SKILL.md) | Triage 4xx/5xx for the token/hub sites from the nginx access log and replay one URL. |
 | [raster-to-arcs](raster-to-arcs/SKILL.md) | Rebuild a raster logo or icon as an SVG of arcs and straight lines, scored by IoU. |
 | [repotracker](repotracker/SKILL.md) | Git status and plan progress for every repo under `~/Projects`. |
 | [tencent-news](tencent-news/SKILL.md) | News, fact-check, weather, sports fixtures, and gaokao admission data. |
