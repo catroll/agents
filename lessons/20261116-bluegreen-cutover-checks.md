@@ -55,3 +55,16 @@ switching back (it did, and nothing dropped).
   <=2 req/s, and keep the probe files so a 429 can be told apart from a 502.
 - `systemctl stop --no-block` returns immediately; a `deactivating` slot still holds its
   port. Check `systemctl show -p ActiveState` before reusing the slot.
+
+## 4. Over HTTP/2 an old worker can proxy one more request a second after reload
+
+Measured on 2026-11-17: a switch and an immediate `systemctl stop` of the old slot
+produced two 502s, both `connect() failed (111) ... upstream: http://127.0.0.1:8080`,
+both `GET /api/status HTTP/2.0`. The reload is asynchronous and an old worker busy
+with something else can accept another stream on its HTTP/2 connection before it
+gets to the GOAWAY, so the window is seconds, not milliseconds.
+
+Put the settle inside the switch primitive (`switch-site.sh`), not in each caller:
+deploy, rollback and manual switches then cannot forget it. Three seconds covered
+the observed case; a worker busy with a slow request can still outlive it, so keep
+the smoke's version retry as a second layer.
