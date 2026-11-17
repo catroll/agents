@@ -30,7 +30,8 @@ out on TCP 80 while 20/20 reached TCP 443 at the same moment. That rules out
 DNS, certificate, nginx and the backend in one shot.
 
 **The whitelist trap.** A 301 from your own egress only proves *your* source IP
-is allowed. The host can carry no firewall at all and inbound can still be
+is allowed. In the real case the whitelisted source was the owner's home
+broadband IP, so the site opened at home and timed out on mobile data. The host can carry no firewall at all and inbound can still be
 filtered upstream:
 
 ```bash
