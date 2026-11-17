@@ -20,6 +20,18 @@ This file is loaded on every turn.
   names, README and other documentation.
 - Conversational replies to the user may be in the user's language.
 
+## When options tie, prefer the more understandable one
+
+- Correctness, risk and cost decide first. Only when two or more options are
+  genuinely equivalent on those does readability break the tie: a version tag over
+  a digest, a name over an id, a human-readable config over a generated blob.
+- The readable choice still keeps the exact identifier where it adds proof
+  (`CASDOOR_IMAGE=casbin/casdoor:3.98.0` plus its digest in a comment), rather than
+  reaching for the unreadable form in the first place.
+- "No clear advantage" excludes a real difference: floating `:latest` is readable
+  but not equivalent to a pinned version, so the pin wins. Record which way the tie
+  broke at the decision point, and why.
+
 ## Security and cost are design gates
 
 - Every feature design and implementation must include an explicit security-risk
@@ -258,6 +270,10 @@ self-signed certs, or a new CA unless the local setup cannot serve the case.
 - Issue with Aliyun DNS:
   `~/.acme.sh/acme.sh --issue --dns dns_ali -d <domain> --server letsencrypt --keylength 2048`
 - Outputs under `~/.acme.sh/<domain>/`: `fullchain.cer`, `<domain>.key`, `ca.cer`.
+- acme.sh `.cer` files are PEM, not DER. For uploads that only accept `.pem`/`.crt`,
+  copy or rename the file; converting with `openssl x509 -inform DER` is only for
+  real DER input. `fullchain.cer` includes the root; a leaf+intermediate chain is
+  safer when the platform rejects a root in the upload.
 - Renewal is the existing daily 21:10 `acme.sh --cron`; upload/deploy is the weekly
   `scripts/coder/sync_acme_certs.sh` (dry-run supported).
 - Details and the synced certificate list: `docs/coder/tracking-domain-certs.md`.
@@ -406,5 +422,12 @@ bullet and the file together.
 - `ModuleNotFoundError: No module named 'config'` in a wrapper that set `os.environ["PYTHONPATH"]` before importing — `sys.path` is fixed at interpreter start; `sys.path.insert(0, root)` in-process (or `PYTHONPATH=… python`), not `os.environ`. `lessons/20261116-pythonpath-runtime-not-syspath.md`
 - `git status --porcelain` paths come back one character short (`oody/...` instead of `woody/...`) — the helper called `.strip()` on the whole output, eating the first line's leading `XY` space; keep porcelain raw and slice `line[3:]`. `lessons/20261116-porcelain-status-strip.md`
 - `429` + HTML `Error - Request Blocked` from `platform.deepseek.com/api/v0/usage/...` — the HWWAF rate limit (5 calls in ~2 min was enough), not an expired Bearer token; an API-level rejection answers JSON `{"code":...}`, the block lasts ~15 min, and bucket granularity comes from the window length (`<=24h` gives `bucket:3600`), not from a `bucket=` param. `lessons/20261116-deepseek-usage-waf-429.md`
-- A unit that `Wants=` a retired unit keeps starting it on every timer tick (`systemctl disable` does not stop `Wants`), and `/api/status` returning the expected version does not prove *your* new slot owns the port — after splitting a service into slots, grep every unit for `Wants`/`Requires`/`After` on the old name, compare `ss`'s listener pid with `systemctl show -p MainPID`, and give the post-`reload` smoke a retry window. `lessons/20261116-bluegreen-cutover-checks.md`
+- A unit that `Wants=` a retired unit keeps starting it on every timer tick (`systemctl disable` does not stop `Wants`), and `/api/status` returning the expected version does not prove *your* new slot owns the port — after splitting a service into slots, grep every unit for `Wants`/`Requires`/`After` on the old name, compare `ss`'s listener pid with `systemctl show -p MainPID`, and give the post-`reload` smoke a retry window — then put that settle inside the switch primitive, not in each caller. `lessons/20261116-bluegreen-cutover-checks.md`
 - `{"success": false, "code": "429", "message": "该skill今日调用额度已达上限(50次)"}` with HTTP 200 from two different ClawX skills — the 50/day counter is per API key, shared across skill codes; cache series to disk, do not fan out synonym probes, and treat the value as of its timestamp once the quota is gone. `lessons/20261116-clawx-skill-daily-quota-429.md`
+- acme.sh `--issue --dns dns_ali` prints `You don't specify aliyun api key and secret yet.` — grep `~/.acme.sh/account.conf` for `SACED_Ali_Secret` (typo) instead of `SAVED_Ali_Secret`; rename the key, keep a backup, and rerun before touching Aliyun or blaming DNS. `lessons/20261116-acme-ali-secret-typo.md`
+- A certificate upload accepts only `.pem`/`.crt` but acme.sh produced `.cer` — acme.sh `.cer` is already PEM; copy/rename it instead of running `openssl x509 -inform DER`. Upload leaf+intermediate (`chain.pem`) when the root is rejected, and verify the key modulus. `lessons/20261116-acme-pem-upload-formats.md`
+- A deploy's `cp <conf>.prod <conf>` makes the headers you just verified disappear — the shipped template on the host was older than the hand-installed live file, so the materialize was a rollback; run it only right after the rsync and assert the header after reload. `lessons/20261116-materialize-after-sync.md`
+- `Cannot send a request, as the client has been closed` from the second iteration of a loop that calls `TestEngine().execute()` — `execute()` closes its client before returning; construct a fresh engine per input, and prove it with a two-input loop where every result has a status. `lessons/20261116-client-closed-between-executions.md`
+- `panic: read /init_data.json: is a directory` on a freshly recreated container — the compose file's relative volume pointed at `./config/...` while the deploy ships `./conf/...`; Docker creates a directory for a missing bind source. Diff `docker compose config` sources and `docker inspect .Mounts` after `up`. `lessons/20261117-compose-relative-mount-path.md`
+- A container disappears or flips project after deploying an unrelated stack (`com.docker.compose.project` is the shared `.env` value, not the compose file's `name:`) — `COMPOSE_PROJECT_NAME` wins over `name:`, so `up --remove-orphans` deletes it; pin every call with `-p`. `lessons/20261117-compose-project-name-collision.md`
+- Bare-domain HTTP times out while `https://` works, `nginx -T` already has `return 301`, and `curl -H 'Host: …' http://127.0.0.1/` returns 301 — probe TCP 80 vs 443 from public nodes (`check-host.net/check-tcp`) before touching nginx; a cloud EIP firewall (UCloud `uhost-1vnv4xpp0yso`, EIP `106.75.145.225`) can block 80 with no rule visible on the host. `lessons/20261117-public-port-80-blocked-cloud-firewall.md`
