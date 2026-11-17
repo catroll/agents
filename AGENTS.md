@@ -233,6 +233,12 @@ meeting records, decisions — anything worth writing down about a day or a week
   the same month directory and keep a short summary plus a link in the week
   file. A meeting record follows the same rule. A project note such as
   `00-meeting.md` does not become the home for that record.
+- Only fixed routines carry the recurring tags (confirmed 2026-11-17). `[每天]`
+  marks an item done every day; `[周X]` marks an item done every week on that
+  weekday, and the week template already supplies those. A normal work record —
+  a one-off investigation, release, meeting note, or task — takes neither tag;
+  its `MM/DD` date tag and day section already place it. Delete a tag that was
+  added by mistake.
 
 ## The project directory is the source of truth for anything installed outside it
 
