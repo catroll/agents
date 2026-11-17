@@ -9,8 +9,10 @@ alone when a browser could settle it.
   those, and the failure reads as a broken browser rather than a policy denial:
   `cannot create XDG_RUNTIME_DIR folder ... read-only file system`. Launch with
   `sandbox_permissions: danger-full-access`, and say why in the justification.
-- **The profile must be inside the workspace.** `/tmp` is refused with
-  `Could not find profile folder`. Use e.g. `$PWD/.cache/ff/prof`.
+- **The profile must be inside the workspace and must already exist.** `/tmp` is
+  refused with `Could not find profile folder`, and the same error appears for a
+  workspace path that was `rm -rf`'d without a following `mkdir -p`; create
+  `$PWD/.cache/ff/prof` before launching.
 - **Use the real binary, not the wrapper.** `/snap/bin/firefox` is a symlink to
   `/usr/bin/snap` and geckodriver rejects it with
   `binary is not a Firefox executable`. The binary is
@@ -91,3 +93,17 @@ alone when a browser could settle it.
   `.markdown-body a:hover { text-decoration: underline }` in
   `github-markdown.css`, so idle looked correct and hover underlined. Assert the
   computed state (`getComputedStyle(el).textDecorationLine`), not only the colour.
+- **`prefers-color-scheme` cannot be emulated over BiDi.** Firefox 157 answers
+  `emulation.setEmulatedMedia` with `unknown command`, so a dark-theme check
+  cannot be forced with the protocol. Put
+  `user_pref("layout.css.prefers-color-scheme.content-override", N);` in the
+  profile's `user.js` and restart Firefox: `1` is light and `0` is dark, the
+  opposite of the intuitive reading. Assert the outcome with
+  `window.matchMedia('(prefers-color-scheme: dark)').matches` and the computed
+  colours (`body`/card background), never the pref number alone.
+- **`window.prompt()` is auto-dismissed in headless Firefox before BiDi can
+  answer it.** `browsingContext.userPromptOpened` does arrive, but a following
+  `browsingContext.handleUserPrompt` fails with `no such alert` and the page
+  already received `null`. For a token-gated flow, seed `sessionStorage` /
+  `localStorage` where the script reads the value and stub
+  `window.confirm = () => true`; verify the prompt itself separately.
