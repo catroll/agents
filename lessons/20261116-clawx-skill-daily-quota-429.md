@@ -25,3 +25,25 @@ Consequences and procedure:
   reusing an old value as if it were live. `realtime-quote` for CMBC-JCJ last
   answered `834.56 / -0.22%` at `2026-11-16 10:09:05`; the 20:41 retry was 429.
 - Failure is not a network problem: do not retry through the proxy or a mirror.
+## Follow-up evidence (2026-11-16 23:17)
+
+A direct `curl` without any local script, still the same day, reproduces it:
+
+```sh
+curl -sS -o body.json -D headers.txt -X POST https://youqian.jd.com/api/gateway/gold/realtime-quote \
+  -H 'Content-Type: application/json' -H "apikey: $CLAWX_JR_API_KEY" \
+  -H 'x-skill-code: gold-analysis-hub' -H 'x-skill-run-id: probe-quota' \
+  -d '{"uniqueCode":"CMBC-JCJ"}'
+```
+
+- Status line: `HTTP/2 200`, `server: jfe`, body `{"success":false,"code":"429",...}`.
+- No `X-RateLimit-*`, `Retry-After` or quota headers at all — the counter is
+  opaque, so the reset boundary cannot be read from the response.
+- The quota is therefore enforced by the JD gateway (the skill scripts only
+  print the body), and the scripts carry no local counter (`grep -rn '额度\|quota'`
+  in the installed skills returns nothing; the limit is undocumented in SKILL.md).
+- Two different skill codes 429 at the same moment while neither had made 50
+  calls alone, so the counter is tied to the API key, not to `x-skill-code`
+  alone, even though the message says "该skill". A single `blogger-trend-new`
+  query already fires ~4 requests ([1/4] skill-report …), and `rank.py` loops
+  one trade-record request per row, so a day of smoke tests reaches 50 quickly.
