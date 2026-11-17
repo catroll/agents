@@ -107,3 +107,8 @@ alone when a browser could settle it.
   already received `null`. For a token-gated flow, seed `sessionStorage` /
   `localStorage` where the script reads the value and stub
   `window.confirm = () => true`; verify the prompt itself separately.
+- **A reused Firefox profile hides front-end changes behind `Cache-Control:
+  max-age=…`.** A page kept rendering the old CSS/JS after a rebuild, which
+  read as "the new rule is not applied"; the server was serving the new file.
+  Check what is served (`curl …/static/x.css | grep <rule>`), then rerun with a
+  fresh profile directory or bypass the cache.
