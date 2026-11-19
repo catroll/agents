@@ -23,6 +23,13 @@
   - Done when: the 11-23 and 11-30 scheduled runs are both green; the roadmap
     Step 0 record is marked done with the two run ids.
 - [ ] **W-003** [P2][B20261123-scheduled-run] Smoke the weekly matrix report mail
+  - 2026-11-19 preview: the mail now goes only to kwicoo, with a distinct
+    `[Matrix]` subject, amber header and a "matrix only" banner (commits
+    `45202434b`, `5e4c5f874`). Sent one real case
+    (`matrix_preview_20261119_2155`, subject
+    `[Matrix] AuroraSendCloud weekly constraint matrix — 2026-11-19: 1/1 passed
+    (100.0%)`) to kwicoo; the scheduler was restarted and task definitions
+    validate. The full 11-23 08:00 mail is still the acceptance check.
   - Done when: the 08:00 mail for the 11-23 run lists the same totals and has no
     failed-case section; if the format is wrong, fix `send_latest_batch_report`.
   - Ev: report dir under `.cache/reports-matrix`.
