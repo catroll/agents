@@ -415,3 +415,4 @@ the file together.
 - The proxy sends `Remote-User` (visible in its debug log) but a loopback-only trust check still 401s, while the same header works with a direct `curl` — `lessons/20261119-uvicorn-proxy-headers-hide-peer.md`
 - `forward_auth` with an optional-session `handle_response @no_session status 302 400 401 403` works while the auth service answers, but stopping it gives a bare `502` and the `handle_response` route never runs (`reverseproxy.statusError ... connection refused`) — `lessons/20261119-forward-auth-connection-error-skips-handle-response.md`
 - `kill "$(cat app.pid)"` reports the process stopped but `ss -ltnp` still shows the old test server and the browser proves the previous behaviour — `lessons/20261119-background-subshell-pid-leaves-test-server.md`
+- Markdown rebuilt by splitting on `^## ` glues each heading to the previous paragraph; Markdown still renders — `lessons/20261120-markdown-section-rebuild-blank-lines.md`
