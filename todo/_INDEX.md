@@ -7,7 +7,7 @@ the subset with `[P0]`. Update this table in the same edit as the project file.
 |---------|------|------|----|----------|---------|
 | Homepage | [homepage.md](homepage.md) | 8 | 0 | — | 2026-11-19 |
 | Winnie | [winnie.md](winnie.md) | 7 | 0 | 2026-11-18 | 2026-11-19 |
-| WoodyCoder | [woody.md](woody.md) | 11 | 2 | 2026-11-23 | 2026-11-18 |
+| WoodyCoder | [woody.md](woody.md) | 8 | 2 | 2026-11-23 | 2026-11-19 |
 | Staticize | [staticize.md](staticize.md) | 0 | 0 | — | 2026-11-18 |
 
 ## Adding a project
