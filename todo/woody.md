@@ -4,7 +4,7 @@
 > Docs: docs/coder/coverage-roadmap.md, docs/coder/constraint-matrix.md
 > Prefix: W
 > Next ID: W-018
-> Updated: 2026-11-19
+> Updated: 2026-11-20
 
 ## Theme: constraint matrix (docs/coder/coverage-roadmap.md)
 
@@ -74,7 +74,12 @@
   - Why: the agent never pushes; the commits include W2b/W2c and the lessons.
   - Done when: `git status -sb` shows `dev...origin/dev` level.
 
-### Batch B20261202-coverage — auth axis and relational mutators (target 2026-12-02, open)
+### Batch B20261202-coverage — auth axis and relational mutators (target 2026-12-02, ON HOLD)
+
+> Hold 2026-11-20 (user decision): do not start W-012/W-013 until the online
+> matrix execution shipped 2026-11-19 is observed clean. Resume criteria:
+> three daily batches (00:10/02:10/04:10) with zero matrix failures, the
+> 11-23 weekly run + 08:00 report clean, and `matrix-manifest` 0 issues.
 
 - [ ] **W-012** [P1][B20261202-coverage] Auth axis: credential constraints and
   `auth_identity` comply cases

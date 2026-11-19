@@ -18,3 +18,4 @@
 - [ ] **TOTP-003** [P1][B20261120-totp][user] Install the Caddy block and run the service
   - Done when: `https://totp.eqr.hosts.d3v.cn/` 302s to the login page, then serves the page after login
   - Ev: `sudo scripts/install-caddy.sh install` in `tools/homepage`; start `bin/totp` under systemd/supervisor; checks in `tools/totp/docs/operations.md` §6.3
+  - Progress 2026-11-20: Caddy block installed and 302 verified; `totp.service` transient started with the example config. Persistent unit and the real YAML remain.
