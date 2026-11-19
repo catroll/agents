@@ -112,3 +112,14 @@ alone when a browser could settle it.
   read as "the new rule is not applied"; the server was serving the new file.
   Check what is served (`curl …/static/x.css | grep <rule>`), then rerun with a
   fresh profile directory or bypass the cache.
+- **A local server that failed to bind serves someone else's page.** Started
+  `python3 -m http.server 8765` with its output redirected to `/dev/null`, got
+  `curl … 200`, then measured a page whose `document.title`, CSS and selectors
+  had nothing to do with the checkout (`JSON.stringify` of
+  `document.querySelector('.mj-site-logo')` came back `null` in every context
+  while `bodyBg` was another app's colour). The port was already held by an
+  unrelated service and the bind failure only reached the discarded log. Before
+  navigating, assert the served page is the one you built — `curl -s
+  http://127.0.0.1:<port>/ | grep <marker-from-build>` or check
+  `ss -ltn "sport = :<port>"` for a foreign pid — and treat an all-`null` probe
+  as "wrong page", not "my markup is missing".
