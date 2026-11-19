@@ -3,7 +3,7 @@
 > Project: ~/Projects/Mine/WLB/tools/woody (coder service + constraint matrix)
 > Docs: docs/coder/coverage-roadmap.md, docs/coder/constraint-matrix.md
 > Prefix: W
-> Next ID: W-016
+> Next ID: W-018
 > Updated: 2026-11-19
 
 ## Theme: constraint matrix (docs/coder/coverage-roadmap.md)
@@ -78,20 +78,35 @@
 
 - [ ] **W-012** [P1][B20261202-coverage] Auth axis: credential constraints and
   `auth_identity` comply cases
-  - Scope: `apiUser`/`apiKey` required/minLength/maxLength/pattern (present,
-    short, invalid) and `auth_identity` valid-credential cases; check whether
-    `tls_required` has a reliable http/https distinction.
-  - Done when: probe→emit→run twice green, the secret gate stays clean, and the
-    core delta is recorded.
+  - Step 0 (pilot, 11-20..11-22): prove the engine semantics — a step
+    `params.apiUser` overrides config (ASC/SC), `api_auth: none` yields a real
+    missing credential, ENG needs an explicit invalid `Authorization` header.
+    Then 30–40 candidates: required-present, required-missing, short/invalid.
+  - Full pass only if the violate pilot rejects; credentials only via env
+    references, never literals. Gate: probe→emit→run twice green, secret gate
+    clean, measured core delta recorded.
 - [ ] **W-013** [P1][B20261202-coverage] Array/relational mutators
-  - Scope: `separator` (wrong separator / missing separator), `ref_exists`
-    (dangling id), `uniqueItems` (duplicate items), `maxItems` (over limit),
-    `items.format` / `items.maxLength`.
-  - Done when: each mutator has a unit check against a base and the generated
-    cases run green.
+  - Operator table first (where the array is, what the separator is, which id
+    is a reference), then one unit check per mutator against a real base:
+    `separator`, `ref_exists`, `uniqueItems`, `maxItems`, `items.format`,
+    `items.maxLength`. Gate: unit check per mutator passes and generated cases
+    run green twice.
 - [ ] **W-014** [P2][B20261202-coverage][dep:W-012,W-013] Coverage checkpoint
   - Done when: core is re-measured after both levers; if ASC is under 50%, the
     60/60/35 target is renegotiated in `coverage-roadmap.md` §5 with the reason.
 - [ ] **W-015** [P3][B20261202-coverage] `pem` sample or permanent skip record
   - Done when: a disposable valid PEM fixture is accepted, or the skip is written
     down as permanent (currently skipped).
+
+- [ ] **W-016** [P2][B20261202-coverage] Value-axis reachability audit
+  - Why: the value bucket shows +189 ASC "both" potential but most single-side
+    rows are unpursuable (`minLength=1` empty==omitted, create-violate has no
+    id to clean by, no base, accepted observations).
+  - Done when: each class is counted with evidence and either a documented
+    exclusion or a renegotiation decision is recorded in `coverage-roadmap.md`.
+- [ ] **W-017** [P3][B20261202-coverage] Paid-send expansion (optional)
+  - Scope: raise the opt-in send subset toward the ≤20/run cap; metadata-only
+    violations; quota preflight must pass; abort on the first successful send
+    and record it as an observation.
+  - Done when: a capped run adds send-op codes without a successful delivery
+    beyond the recorded one, or the lever is rejected with the reason written.
