@@ -298,10 +298,41 @@ date, timezone), not on the raw question text. Store an explicit TTL per data
 shape, prune on write, and store `fetched_at` with the payload. A "today" cache
 keyed without the date serves yesterday.
 
+## User-level services run only with a login session — accepted on this machine
+
+Confirmed by the user on 2026-11-18. `loginctl show-user catroll -p Linger`
+reports `no`, so the `~/.config/systemd/user` units (dsh, winnie, homepage,
+tinyapi, ...) run only while catroll has a session. On this local server that
+is intended and is not a problem. Do not propose `loginctl enable-linger`, and
+do not list it as a gap in audits, backups, restore notes or health checks.
+
 ## Update a todo list before the reply
 
 If a turn opened a plan, mark each item completed when its work lands. The last
 update before the reply has nothing `in_progress` or `pending`.
+
+## Project todos live in ~/.agents/todo/
+
+The cross-session todo list per project is the owner of planned work; the chat
+and the session todo list are not.
+
+- Layout: `~/.agents/todo/<project>.md`; the index is `_INDEX.md`, the item
+  schema and lifecycle are in `_README.md`, and `_TEMPLATE.md` is the skeleton
+  for a new project. Project name = the owning repo/tool directory in lowercase
+  (`woody`, `homepage`, `auth`, ...).
+- When a request names a project, read its todo file first (`grep -n '^- \[ \]'`
+  gives the open list) and work in this order: open P0s by due date, then P1s,
+  then the earliest open batch. Say which item ID is being executed.
+- Every item carries `[P0..P3]` (P0 blocked/release-critical, P1 high, P2
+  normal, P3 optional) and a batch `[B<YYYYMMDD>-<slug>]` or `[B-backlog]`.
+  `[user]` marks work only the user can do.
+- Update the file in the same turn a task starts, finishes, blocks or changes
+  scope: flip the marker, append `-> done YYYY-MM-DD (evidence)`, allocate the
+  next ID from `Next ID`, bump `Updated`, and correct `_INDEX.md` counts.
+- No second home: a durable item or decision in the chat goes into this file
+  before the reply; a turn's mechanical steps still use session todo_write.
+- Archive completed batches older than 30 days under `## Archive`; never delete
+  an item or reuse an ID.
 
 ## Progress is written into the owning document as it lands
 
@@ -436,7 +467,7 @@ bullet and the file together.
 - Capture RMS looks fine but the 300–3000 Hz band does not move — the input gain is up around +60 dB; measure the speech band. `lessons/mic-gain-speech-band.md`
 - A documented option is set and nothing happens — grep the library for reads of that name, not the assignment. `lessons/documented-option-unread.md`
 - A failed form save redirects and the typed values are gone — re-render with the submitted non-secret fields. `lessons/redirect-on-validation-loses-input.md`
-- Files just edited show up in another commit's diff, or `git status` flips between two change sets — the other session ran `git add -A`. Stage explicit paths. `lessons/second-session-git-add.md`
+- Files just edited show up in another commit's diff, `git status` flips between two change sets, or `git log -1` after `--amend` shows someone else's subject — another session is committing in the same repo. Stage explicit paths, check the index **unfiltered** (`git diff --cached --name-status`), commit with `git commit -F - -- <paths>`, and never `--amend` without confirming HEAD is yours; recover with `git reflog` + `reset --soft`. `lessons/second-session-git-add.md`
 - The task panel still lists work in progress after the turn finished — the plan was never updated. Close every item before the reply. `lessons/todo-list-stale.md`
 - A black-box UI test fails after a UI change with `textarea = "", want ...`, `expected to find "already exists"`, or `status = 422, want 303` — the assertion pinned a widget, sentence or status; confirm the user-visible outcome still holds, then discover controls from the rendered page and assert behaviour, not markup. `lessons/20261113-ui-tests-pin-behaviour.md`
 - A "drop-in" faster parser/encoder changes behaviour on edge inputs after a version bump (`jsonx result "a�b" does not preserve the raw bytes as documented` after goccy v0.10.5 → v0.12.0) — keep a differential test against the stdlib and rerun it after every upgrade; API compatibility is not behaviour compatibility. `lessons/20261113-parser-swap-differential-test.md`
@@ -477,5 +508,25 @@ bullet and the file together.
 - User asks what the homepage control token is (`控制令牌`, `CONTROL TOKEN 是什么`, `那个令牌在哪`) — answer with exactly `grep '^HOMEPAGE_CONTROL_TOKEN=' ~/.config/wlb-homepage/wlb-homepage.env`, never the value. `lessons/20261117-homepage-control-token-answer.md`
 - `read_image` returns `model "deepseek-v4-flash" does not declare image input` — the running model has no vision channel; don't convert the file or install OCR, read the text record or ask the user. `lessons/20261117-read-image-requires-vision-model.md`
 - `libreoffice --headless --convert-to txt file.doc` exits 1 and `strings -el` shows only metadata — no office converter is installed; read the OLE `WordDocument` stream with `olefile` (`fcMin`/`fcMac` at 0x18, UTF-16LE). `lessons/20261117-legacy-doc-text-via-olefile.md`
+- `file <capture>: data` / `read` reports `binary file` or `invalid UTF-8 text` after a collection script read `/proc/*/cmdline` — argv is NUL-separated; pipe through `tr -d '\000'` at capture time (or sanitize the file before reading), the rest of the output is valid. `lessons/20261118-proc-cmdline-nul-bytes.md`
+- `ssh -o PubkeyAuthentication=no -o PreferredAuthentications=password host true` exits 0 after password auth was disabled — `ControlMaster auto` + `ControlPersist` reused an authenticated master and skipped auth; test with `-o ControlMaster=no -o ControlPath=none` and expect `Permission denied (publickey)`/255. `lessons/20261118-ssh-controlmaster-hides-auth-change.md`
+- `systemctl mask <unit>` → `Failed to mask unit: File /etc/systemd/system/<unit> already exists.` — mask cannot replace a real unit file in `/etc`; `disable` already removes the `.wants` symlink, so report `disabled` (or move the file aside), never `masked`. `lessons/20261118-mask-cannot-shadow-etc-unit.md`
+- YAML `ParserError: expected <block end>, but found '<scalar>'` on a line after a description — an unquoted ` # ` starts a comment; remove it, quote the scalar, or use a block scalar. `lessons/20261118-yaml-plain-scalar-hash.md`
+- `harden.sh report` → `ERROR: no run found` after `rsync -a --delete <tool>/ host:/opt/<tool>/` — the tool keeps `records/` on the target only, and `--delete` removed it; sync with `--exclude 'records/'` and keep a copy of the run records outside the tool dir. `lessons/20261118-rsync-delete-wipes-runtime-records.md`
+- `permitlisten=127.0.0.1:15232` in `authorized_keys` gives a silent `Permission denied (publickey)` — quote the value as `permitlisten="127.0.0.1:15232"`; an unquoted host:port or a bare port is rejected as if the key were wrong. Capture `sshd -T` into a variable before `grep -q`, because `set -o pipefail` turns the SIGPIPE into exit 141 and a false "forwarding disabled" verdict. `lessons/20261118-authorized-keys-permitlisten-quotes.md`
+- `sudo: interactive authentication is required` from `sudo -n ufw status` / `sudo -n ss -lntp` — danger-full-access does not grant sudo on this machine, so never report firewall state or a bound port's reachability from a listening socket; hand `sudo ufw status numbered` to the user and wait for the output, and ship privileged changes as a tracked script plus a user-run command. `lessons/20261118-sudo-password-no-privilege.md`
+- `certificate not found: /root/.acme.sh/...` when the same installer worked as `bash … render` — sudo sets `HOME=/root`, so `${HOME:-/root}` defaults read the wrong home; resolve the caller from `SUDO_USER` via `getent passwd`, allow `ACME_HOME`/`--cert-src` overrides, and test the resolution with `env -i SUDO_USER=… HOME=/root`. `lessons/20261118-sudo-resets-home.md`
+- `AttributeError: '_StubIndex' object has no attribute 'search_many'` from inside a test nobody edited — the production client grew a method and a hand-written test double did not; `ToolBox`-style error wrapping turned it into a false assertion failure. Grep the test doubles when a client gains a method, and mirror the real semantics (merge key, cap), not just the name. `lessons/20261118-test-stub-missing-method.md`
+- `openssl s_client -connect 127.0.0.1:443 -servername <host>` shows a certificate whose `notAfter` is older than the renewed `~/.acme.sh/<domain>_ecc/fullchain.cer` — a copy-based TLS install (explicit `tls` paths in Caddy/nginx) has no reload path, so renewal silently never reaches the listener. Check what is served per SNI; fix with a root oneshot + timer that copies on byte change, verifies the key pair, and reloads. `lessons/20261118-cert-copy-without-reload.md`
+- Replacing a whole row with `str.replace` in a shared file (`~/.agents/todo/_INDEX.md`, a weekly note) deletes every match, and a row added by another session between read and write becomes a duplicate — re-read right before writing, insert against a unique anchor, remove by line index, and assert `grep -c` is 1. `make <target>` printing `Nothing to be done` after adding a recipe means the edit did not land. `lessons/20261118-shared-file-concurrent-rewrite.md`
+- `VAR: 未绑定的变量` printed only under `sudo`, while `bash -n` and a non-root dry run pass — the missing `VAR=${VAR:-…}` default sits behind a root-only branch nobody executed; extract the script up to its action dispatch, call the privileged helper under `bash -uc` with stubbed side effects, and commit that harness. `lessons/20261118-unbound-var-root-only-path.md`
+- A backup/collector run reports success and has a directory per service, but its own restore-side check says `54 differ` / `cmp: …config.yaml: 是一个目录` — the copy helper mkdir'd the full file path for file sources, and the manifest was built from the source tree so files dropped by `rsync --exclude '*.bak'` were still listed. Build the manifest from the copy, ship a `--check` mode that requires `0 differ, 0 missing`, and expect `MISSING`/`DIFF`/`UNREADABLE` separately. Also: `next=$(grep … | head …)` inside `set -euo pipefail` aborts and leaves a half-written file — add `|| true`. `lessons/20261118-backup-verify-with-check-mode.md`
+- `install-caddy.sh install` succeeds while the `forward_auth` backend is down → every gated host answers 502, including the auth portal — `caddy validate` cannot see the dependency; health-check `http://127.0.0.1:3000/api/healthz` before swapping a config that contains `forward_auth`, check `systemctl is-active` before trusting a health probe (a manual instance on the port fakes success), and capture/strip TTY CRLF+ANSI when parsing a vendor CLI. `lessons/20261118-forward-auth-gate-before-backend.md`
+- `install-*.sh` stops silently right after its last `==>` line (status 1, no error) — a helper used as a boolean (`[ -n … ] || return 1`) was called bare under `set -e`, which cannot tell "false" from "failed"; return 0 and `die` on error, and test the root-only path by sourcing the script (guard dispatch with `[ "${BASH_SOURCE[0]}" = "$0" ]`) with stubbed `systemctl`/`curl`. `lessons/20261118-shell-helper-return-one-aborts.md`
+- A code change plus `systemctl restart` behaves exactly like the old build (`ExecStart` points at a binary, not `go run`) — restarting re-executes the artifact on disk; compare the artifact mtime with the source, rebuild explicitly, and verify by the new behaviour, not by "unit active". `lessons/20261118-unit-runs-prebuilt-binary.md`
+- A "logout" behind `forward_auth` lands on a disabled-login page and the next request is still authenticated — the app session is not the credential any more; the edge re-applies `Remote-User` every request. Clear the app session and redirect `/login`/`/logout` to the IdP (tinyauth `/logout`, which posts from its own origin because a cross-site POST drops the SameSite=Lax cookie). `lessons/20261119-app-logout-behind-forward-auth.md`
+- An app behind `forward_auth` still shows its own login page (or `curl -H 'Remote-User: admin' https://<host>/api/...` returns 200) — the gate covered the document but not the SPA's API calls, so the upstream never saw the header and a forged one was accepted; gate the API paths too, strip client `Remote-*` on every upstream route, and keep the strip before `forward_auth` inside `route`. `lessons/20261119-gate-page-not-api.md`
+- Upstream receives `Remote-User: {http.reverse_proxy.header.Remote-User}` and an app-side `header == ""` check treats the placeholder as a real user — Caddy 2.6.2 `copy_headers` leaves the unexpanded placeholder when the auth response lacks the field; reject brace-prefixed values and assert the exact header value at the upstream. `lessons/20261119-caddy-copy-headers-placeholder.md`
+- The proxy sends `Remote-User` (visible in its debug log) but a loopback-only trust check still 401s, while the same header works with a direct `curl` — uvicorn's default proxy headers rewrote `request.client` to the `X-Forwarded-For` value; run `proxy_headers=False`/`--no-proxy-headers`, record the transport peer in a scope key, and test with a non-loopback forwarded address. `lessons/20261119-uvicorn-proxy-headers-hide-peer.md`
 - `forward_auth` with an optional-session `handle_response @no_session status 302 400 401 403` works while the auth service answers, but stopping it gives a bare `502` and the `handle_response` route never runs (`reverseproxy.statusError ... connection refused`) — connection failures are not responses; add a site-level `handle_errors` matching `{http.error.status_code} == 502`, scope it by path, and strip client `Remote-*` in the route before the auth call so the fallback cannot inherit a forged identity. `lessons/20261119-forward-auth-connection-error-skips-handle-response.md`
 - `kill "$(cat app.pid)"` reports the process stopped but `ss -ltnp` still shows the old test server and the browser proves the previous behaviour — `cd x && bin … &` records the subshell's pid, not the binary's; assert a new-build marker on the served page before driving the browser, start with `( cd … && exec … ) &`, and kill by the `ss` listener pid. `lessons/20261119-background-subshell-pid-leaves-test-server.md`
