@@ -4,7 +4,7 @@
 > Docs: docs/coder/coverage-roadmap.md, docs/coder/constraint-matrix.md
 > Prefix: W
 > Next ID: W-012
-> Updated: 2026-11-18
+> Updated: 2026-11-19
 
 ## Theme: constraint matrix (docs/coder/coverage-roadmap.md)
 
@@ -45,9 +45,11 @@
   - Done when: a dry-run shows the remaining unsampled forms; new samples are
     regex-validated and the `no-sample` count is <10 per target (or each
     remaining one has a written reason).
-- [ ] **W-007** [P2][B20261125-w2c2] Add the W4 send-subset quota preflight
-  - Done when: `--allow-send` checks remaining daily quota before the run and
-    aborts with a clear reason below the threshold (today it is manual).
+- [x] **W-007** [P2][B20261125-w2c2] Add the W4 send-subset quota preflight
+  - Done 2026-11-19: `remaining_send_quota()` reads ASC/SC get-account-info and
+    ENG get-account-quota; emit aborts fail-closed below `send_limit + 50`.
+    Evidence: ASC 2000 / SC 4117 / ENG 5897; abort path exits with need=9050.
+    (`woody` commit `coder: check remaining send quota before an opt-in send run`).
 - [ ] **W-008** [P3][B20261125-w2c2] `pem` format comply sample
   - Done when: either a disposable valid PEM fixture exists and is accepted, or
     the skip is documented as permanent (current state: skipped).
@@ -59,12 +61,12 @@
     Current observation counts are 39/27/41 (ASC/SC/ENG).
   - Done when: a probe pass re-checks them and the observations file is updated
     (drop entries that now reject, keep the rest).
-- [ ] **W-010** [P3][B-backlog] Decide the ignore rule for
+- [x] **W-010** [P3][B-backlog] Decide the ignore rule for
   `scripts/coder/check/work/` run artifacts
-  - Why: every case-number check leaves an untracked run directory, so
-    `git status` is never clean.
-  - Done when: `check/work/` is either gitignored or the checker writes under
-    `.cache/`.
+  - Done 2026-11-19: README already promised gitignore, but 88 files stayed
+    tracked; they were untracked (kept on disk) and the path is in `.gitignore`.
+    Evidence: `git status` clean for woody; commit `chore(coder): untrack
+    scripts/coder/check/work run artifacts`.
 - [ ] **W-011** [P2][B-backlog][user] Push `dev` (6 commits ahead of
   `origin/dev` as of 2026-11-18)
   - Why: the agent never pushes; the commits include W2b/W2c and the lessons.
