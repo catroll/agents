@@ -33,3 +33,18 @@ sudo ufw delete allow 3080/tcp
 Everything that must land outside the repo (systemd units, `/etc/caddy`,
 ufw rules) also follows the project-source-of-truth rule: track the copy in the
 repo and ship a script, then have the user run the privileged step.
+
+## The password prompt belongs to the user's tty
+
+`terminal_send` of `sudo -v` stops at `[sudo: authenticate] 密码：`, and the user
+types the password into that pty. After that the terminal is user-owned (the
+agent can only read it), and sudo's timestamp is per-tty, so a fresh agent shell
+still gets `interactive authentication is required` even though the user just
+authenticated in a neighbouring terminal. Do not plan on reusing the credential.
+
+Also, do not avoid the privilege problem by starting a parallel instance of the
+service under the agent's own user (e.g. a second `ollama serve` on another
+port): the user asked for the real service to be tested, and it costs a large
+download into a second model store. From the first failed `sudo -n`, hand over a
+single paste-ready block that contains the privileged step, then measure from
+the unprivileged side.

@@ -123,3 +123,10 @@ alone when a browser could settle it.
   http://127.0.0.1:<port>/ | grep <marker-from-build>` or check
   `ss -ltn "sport = :<port>"` for a foreign pid — and treat an all-`null` probe
   as "wrong page", not "my markup is missing".
+- **A generic BiDi `evaluate()` that JSON-parses every result fails on
+  side-effect expressions.** `document.querySelector('#refresh').click()`
+  returns `undefined`; the raw result is
+  `{"type":"success","result":{"type":"undefined"}}` and `JSON.parse(undefined)`
+  throws. Wrap side effects as `(el.click(), true)`, or send them through a
+  helper that returns the raw result instead of parsing it.
+
