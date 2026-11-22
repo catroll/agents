@@ -12,6 +12,13 @@ pointer.
 - Size gate: under ~32 KB; an edit that would exceed it shrinks or moves an
   existing section first.
 
+## Owner identity
+
+The owner's English name is **Woody** (use it in reports, commits and filenames
+when a person is named). Woody is the New API developer: product, operations and
+commercial decisions are not his. Separate technical work from those decisions,
+and never assign product, operations or commercial tasks to him.
+
 ## Language
 
 Write **everything in English** — code, comments, logs, error strings,
@@ -296,6 +303,10 @@ the file together.
 - `npm ERR! code EROFS` under `/home/catroll/.npm` — `lessons/npm-cache-erofs.md`
 - `Node.js is not compiled with TypeScript support` — `lessons/workflow-tool-no-typescript.md`
 - `[killed by signal: SIGTERM]` from `pkill -f` / `pgrep -f` — `lessons/pkill-matches-shell.md`
+- `OSError: [Errno 98] Address already in use` in a test, then another app answers `415`, and that service is now down — `lessons/20261122-test-port-owner-killed.md`
+- `ffprobe` prints `N/A` for `format=duration` / `stream=duration` on a file the browser just recorded — `lessons/20261122-mediarecorder-no-duration.md`
+- ASR returns 200 with all scores `0`, `Display` `"."` and every word `Omission` — `lessons/20261122-asr-zero-scores-silent-input.md`
+- `AudioContext.state` stays `"suspended"` in headless Firefox and analyser data is all `128` — `lessons/20261122-headless-audiocontext-suspended.md`
 - Cron entry present, log says `make: uv: 没有那个文件或目录`, or a `%` in the crontab command produces no output — `lessons/cron-path-and-percent.md`
 - GitHub Release `curl` exits 28 and leaves a short archive (~25 KB/s here) — `lessons/github-release-slow-truncated.md`
 - ImageMagick SVG exits 0 but strokes are gone (`rsvg-convert` is not installed) — `lessons/svg-imagemagick-stroke.md`
@@ -392,3 +403,17 @@ the file together.
 - tinyauth bootstrap fails with `invalid app url` when `TINYAUTH_APPURL` is `localhost` or an IP; use a loopback domain (`lvh.me`) — `lessons/20261120-tinyauth-local-appurl.md`
 - `git filter-repo` drops `rm --cached`+gitignored files from the working tree and prunes the old objects (`git show <old>:<path>` → `无效的对象名`) — `lessons/20261120-filter-repo-drops-untracked-files.md`
 - `npm WARN EBADENGINE` after `sudo npm install -g` for a package the fnm-managed Node satisfies, or an upgrade that reports success while the service still runs the old version — `lessons/20261120-sudo-npm-fnm-node.md`
+- A failure report proposes a DSL change ("status 断言 200") but the YAML already asserts 400, or cites a case/file the repo does not have — `lessons/20261120-report-edits-verify-against-artifact.md`
+- A collector's output starts later than the source history and the gap is written off as "old records have no date" — `lessons/20261120-collector-start-date-vs-source.md`
+- A form handler rejects every save with `must be a whole number` because it parses a field the template never posts — `lessons/20261121-form-validation-unposted-fields.md`
+- A doc-edit script prints `<label>: 0` after several edits and none of that file's changes landed — `lessons/20261121-doc-script-anchor-abort-loses-edits.md`
+- PocketBase multi-relation `field ?= "id"` matches nothing; use `field.id ?= "id"` — `lessons/20261121-pocketbase-multi-relation-filter.md`
+- `connect to host documentation.ubuntu.com port 443` times out with `curl: (28)` through `~/.proxyrc`, while the same URL returns 200 with the proxy variables unset — `lessons/20261121-proxy-breaks-some-hosts.md`
+- Untracked `__pycache__/` appears in a repo after a delegated review ran its `.py` files — `lessons/20261121-review-subagent-pycache.md`
+- A root-owned global CLI fails with `EACCES … mkdir '…/node_modules/<pkg>/node_modules/flat-cache/.cache'` and the build still looks partly done — `lessons/20261121-honkit-global-cache-eacces.md`
+- A repo is called private because `curl` returned 200 or the remote is SSH, while the logged-out page lists every file — `lessons/20261121-repo-visibility-check.md`
+- `apt-cache policy <pkg> | grep 'Candidate:'` is empty for every package on a zh_CN host while the same command with `LC_ALL=C` works — `lessons/20261121-apt-output-locale.md`
+- `local path=…` in a zsh function clobbers PATH, `local status` is read-only, and aliases are baked into function bodies at definition — `lessons/20261121-zsh-function-traps.md`
+- xorriso repack of a hybrid ISO returns 32 / `Read start address ... larger than number of readable blocks`, or `-boot_image any keep` leaves a stale MBR — `lessons/20261121-xorriso-keep-vs-replay.md`
+- `sqlite3 live.db ".restore backup.db"` exits 0 and leaves an empty database (and truncates the backup source) — `lessons/20261121-sqlite-dot-restore-not-copy.md`
+- Two planned tasks share files and the first task's changes show up in the second task's commit — `lessons/20261122-task-boundary-commit.md`
