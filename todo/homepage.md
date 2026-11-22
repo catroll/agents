@@ -2,8 +2,8 @@
 
 > Project: ~/Projects/Mine/WLB/tools/homepage
 > Prefix: H
-> Next ID: H-035
-> Updated: 2026-11-19
+> Next ID: H-037
+> Updated: 2026-11-20
 
 ## Theme: 本地服务统一入口
 
@@ -169,4 +169,18 @@
   - 两个模板都要改：`tools/homepage/deploy/caddy/hosts.caddy.in` 与线上生效的 `~/Projects/Mine/winnie/deploy/caddy/winnie-console.caddy`（精确主机遮蔽通配块）
   - Done when: 线上登录后 `/home/` 显示用户名、下拉含「设置」「退出」与按钮；未登录显示齿轮但无菜单/按钮，点齿轮经门户登录后回到 `/home/admin`；action 仍 401；tinyauth 宕机时 `/home/` 仍 200 匿名
   - Ev: 2026-11-19 代码与模板完成；`make check`、`make validate`、`make scripts-test` 通过；临时 Caddy + 真实 tinyauth / 桩 auth 全链路（匿名/有会话/伪造头/auth 宕机/401→302 到门户）与 Firefox BiDi 实测通过，记录在 `docs/auth.md` §6.7、`docs/operations.md` §8.14、§8.16。2026-11-19 02:25 应用已重启（`make service-install`，版本 `42c4d6181`，MainPID `213483`，直连匿名只有齿轮、带 `Remote-User: catroll` 有菜单/「设置」/「退出」/13 按钮）；Caddy 两份配置仍待用户跑 `sudo scripts/install-caddy-winnie.sh` 与 `sudo scripts/install-caddy.sh install`（`--check`/`caddy-diff` 均报预期 drift），落盘后在浏览器验证齿轮→登录、登录后右上角用户名与「退出」
+
+### Batch B20261120-links — 常用链接补充 (target 2026-11-20, done)
+
+- [x] **H-035** [P2][B20261120-links] 补充个人工具、邮箱账号与邮件投递工具链接
+  - 个人 Tab：工具列加 Todoist / docsmall / 佐糖，开发/社区列加 Gitee / ECharts，新增「邮箱」列（Gmail / 网易 / Outlook / iCloud / Proton）
+  - 工作 Tab：新增「邮件」列（MxToolbox 邮件头与 SuperTool、Outlook SNDS、Cisco Talos、Email Checker、Googlebot 验证、Google/Yahoo 发件人规范）
+  - 伦敦金（wzg.com/gold/）已在理财 Tab，未重复添加；MxToolbox 邮件头两条 URL 为同一工具，取 `EmailHeaders.aspx` 一条
+  - Done when: `make validate` 通过；线上 `/home/` 渲染出两列新链接
+  - Ev: 2026-11-20 `make validate` → 6 groups / 92 sites；`make check` 通过；`curl /home/` 200，18 条新 URL 均在 href 中，个人 Tab 出现「邮箱」列、工作 Tab 出现「邮件」列
+
+- [x] **H-036** [P2][B20261120-links] 按用途重整个人 Tab 的分组
+  - 「eqr」→「项目」；「本地」→「服务」；Winnie、Cinema 归入「项目」，DeepSeek Harness 归入「服务」；「开发/社区」→「开发者」并删除 知乎（阅读 Tab 已有）
+  - Done when: `make validate` 通过；线上 个人 Tab 列为 项目/服务/Woody/AI/搜索/工具/云服务/影音/开发者/邮箱，个人 Tab 不再含 知乎
+  - Ev: 2026-11-20 `make validate` → 6 groups / 92 sites；`make check` 通过；`curl /home/` 200，项目列 6 项（Markjour/NewAPI/TinyAPI/TOTP/Winnie/Cinema）、服务列 4 项（DeepSeek/CC-Connect/DDNS-GO/Support）、开发者列 5 项，个人 Tab `知乎` 出现 0 次，阅读 Tab 保留 3 条 知乎 链接
 

@@ -3,8 +3,8 @@
 > Project: ~/Projects/Mine/WLB/tools/woody (coder service + constraint matrix)
 > Docs: docs/coder/coverage-roadmap.md, docs/coder/constraint-matrix.md
 > Prefix: W
-> Next ID: W-018
-> Updated: 2026-11-20
+> Next ID: W-021
+> Updated: 2026-11-21
 
 ## Theme: constraint matrix (docs/coder/coverage-roadmap.md)
 
@@ -115,3 +115,47 @@
     and record it as an observation.
   - Done when: a capped run adds send-op codes without a successful delivery
     beyond the recorded one, or the lever is rejected with the reason written.
+
+### Batch B20261120-engagelab-fixes — product SSRF feedback + 256 title limit (done 2026-11-20)
+
+- [x] **W-018** [P1][B20261120-engagelab-fixes] Fix the Engagelab webhook
+  fixtures and the calendar-title boundary after the product team confirmed the
+  webhook `30710` is intentional SSRF protection.
+  - Done 2026-11-20: 20 `generated/Engagelab/*webhook*.yaml` files moved from
+    `.testhook.local` / `*.local` to
+    `https://nexus.d3v.cn/woodyhook/webhook/eng-*` (long-URL cases padded to stay
+    < 1024); case 1240 now sends a 257-char title (docs say max 256). Notes record
+    that the fix report was wrong about 15910-15912 asserting 200 (they assert
+    400) and about 8306 needing a status change (it already asserts 401).
+  - Ev: `python -m dslcheck references|field-order|descriptions` on the 21 edited
+    YAML files (`done: all ... OK`); `grep -rn '\.local' generated/Engagelab`
+    empty; commit 3b5995e21.
+- [x] **W-019** [P2][B20261120-engagelab-fixes] Rebuild the update-webhook URL
+  matrix cases on the measured 1023/1024 boundary
+  - Why: `61de25daa` deleted `update-webhook_Exception_Url_ExceedsMaxLengthMatrix`
+    (15911) and `..._InvalidFormatMatrix` (15912) when the base still used
+    `testhook.local`; the base is fixed now, but 15911's sample is 2049 `a`
+    chars with no scheme, so it only proves `30706` (format), not a length limit.
+  - Measured 2026-11-20 (details in `notes/create-webhook.md`): max accepted
+    1023; 1024 rejected with create `30710` / update `30712`; >1024 -> `30716`.
+    The ledger still says 2048. The 256-char title boundary is also confirmed
+    (256 accepted, 257 -> `30835`; sandbox does validate).
+  - Progress 2026-11-20: `constraint_matrix.mutate()` now emits a scheme-bearing
+    URL for `url`/`newurl` maxLength; the ledger cap is 1024 for create/update
+    webhook; `update-webhook_Exception_Url_ExceedsMaxLengthMatrix` (15911,
+    1025 -> 30716) and `..._InvalidFormatMatrix` (15912) are restored; new
+    `..._Url_ExceedsMaxLengthAt1024` (15914, 1024 -> 30712; 15913 is the
+    orphaned first name) and
+    `send-calendar-email_Boundary_TitleLength_Max256` (1241, 256 -> 200) are
+    added; the success boundary in the long-URL case is 1023. Offline checks,
+    case numbers and `matrix-manifest` (0 issues) pass.
+  - Done 2026-11-21: batch `20261121_041000_87844dc5_batch` ran 1414/1414
+    green (0 failed) with the deployed files matching `07bee6b34`; 15911 ->
+    400/30716, 15912 -> 400/30706, 15914 -> 400/30712, 1241 -> 200 sandbox,
+    1240 -> 400/30835. The remaining create-webhook length case moved to W-020.
+- [ ] **W-020** [P3][B20261120-engagelab-fixes] Add a create-webhook URL
+  length violation case
+  - Why: create accepts 1023 and rejects 1024 with `30710`, >1024 with `30716`;
+    `CREATE_WEBHOOK_URL_MAXLENGTH.tested.violate` is still false.
+  - Done when: a create case asserts 1024 -> `30710` (or 1025 -> `30716`), runs
+    green, and the ledger marks the side tested.
