@@ -3,8 +3,8 @@
 > Project: ~/Projects/Mine/staticize
 > Docs: docs/roadmap.md, admin/README.md
 > Prefix: ST
-> Next ID: ST-004
-> Updated: 2026-11-18
+> Next ID: ST-005
+> Updated: 2026-11-24
 
 ## Theme: admin operations
 
@@ -50,3 +50,20 @@
   (templates/tpl.base.html, static/css/common.css, tools/make_favicons.py,
   tests/test_header_logo.py, tests/test_favicons.py,
   static/logo/markjour-logo.png; commit abd2f23f7)
+
+## Theme: maintenance
+
+### Batch B20261124-imgcheck-ci — image check and a CI gate (done 2026-11-24)
+
+- [x] **ST-004** [P1][B20261124-imgcheck-ci] Fix `articles imgcheck` after the
+  image links moved to `/media/images/...` and add a Gitee Go gate so a script
+  regression fails CI
+  - Done when: `make articles-imgcheck` reports only genuinely missing files,
+    the resolver has a test per reference form, and the Gitee pipeline runs the
+    checks and a cold build.
+  - Ev: `markjour/scripts/articles.py` normalizes canonical/legacy/bare forms,
+    fails on unknown local paths, skips fenced examples; 15 tests in
+    `tests/test_articles_imgcheck.py`; `make check` green (264 tests); `make
+    generate` 8730 pages; `bash tools/ci.sh` exit 0; `.workflow/*.yml` run it on
+    Python 3.12 -> done 2026-11-24
+  (Makefile, tools/ci.sh, .workflow/, docs/build.md, tests/test_articles_imgcheck.py)

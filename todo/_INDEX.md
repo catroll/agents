@@ -10,7 +10,7 @@ the subset with `[P0]`. Update this table in the same edit as the project file.
 | TOTP Authenticator | [totp.md](totp.md) | 2 | 0 | — | 2026-11-21 |
 | Winnie | [winnie.md](winnie.md) | 7 | 0 | 2026-11-18 | 2026-11-19 |
 | WoodyCoder | [woody.md](woody.md) | 11 | 2 | 2026-11-23 | 2026-11-21 |
-| Staticize | [staticize.md](staticize.md) | 0 | 0 | — | 2026-11-18 |
+| Staticize | [staticize.md](staticize.md) | 0 | 0 | — | 2026-11-24 |
 | ISO Maker | [isomaker.md](isomaker.md) | 5 | 0 | — | 2026-11-21 |
 | aliases | [aliases.md](aliases.md) | 0 | 0 | — | 2026-11-21 |
 | StdEnv/stdenv | [stdenv.md](stdenv.md) | 2 | 0 | — | 2026-11-21 |
