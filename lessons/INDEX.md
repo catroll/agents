@@ -127,4 +127,5 @@ One line per lesson: the trigger (error string, command, or situation) and the f
 - `grep: 无效的定序字符` on `grep -c $'[\u4e00-\u9fff]'`, with no count and exit 2, so a language audit reports "0 CJK" from a failed command — `20261124-grep-cjk-range.md`
 - A checker prints every reference as missing after a path/URL convention change (`/media/images/...` vs `../images/...`) while still exiting 0 — `20261124-consumer-only-knows-old-form.md`
 - A docs cleanup deletes zero-byte `.md` pages and their `SUMMARY.md` as "empty", though they were the planned chapter skeleton — `20261124-empty-file-is-planned-structure.md`
+- `web_fetch` returns `HTTP 200` with only the page `<title>` (sendcloud.net/aboutUs, engagelab.com), or an Akamai `Access Denied` body (ir.jiguang.cn) — `20261124-web-fetch-spa-title-only.md`
 - A folder is moved to `archive/` because its files duplicate a shared tree, though it was a person's own work from that period — `20261124-duplicate-is-not-disposable.md`

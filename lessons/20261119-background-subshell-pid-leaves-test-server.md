@@ -49,3 +49,20 @@ the port matters.
 gone, so the code was fine; the false failure came entirely from the stale
 process. A browser assertion failing "right after" a rebuild should first prove
 which process answered the request.
+
+**Variant: a failed second start overwrites the pid file.** Starting again while
+the old process is alive logs `bind: address already in use` and exits, but the
+launcher still writes its pid. `kill "$(cat app.pid)"` then hits a dead process,
+and the old server keeps the port. Worse, if the SQLite file was deleted and
+recreated during the "restart", the old process still holds the *unlinked* old
+inode and serves stale rows while the new file passes checks. Check the real
+listener and, when data looks stale, the open file:
+
+```sh
+ss -ltnp 'sport = :8791'
+ls -l /proc/<pid>/fd | grep -E 'keyops.db|\(deleted\)'
+```
+
+Stop by listener pid, verify the port is free, then start; assert the new pid is
+the listener before trusting the pid file. `make status` / `make stop` now
+resolve the listener rather than a recorded pid.
