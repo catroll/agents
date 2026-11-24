@@ -129,3 +129,4 @@ One line per lesson: the trigger (error string, command, or situation) and the f
 - A docs cleanup deletes zero-byte `.md` pages and their `SUMMARY.md` as "empty", though they were the planned chapter skeleton — `20261124-empty-file-is-planned-structure.md`
 - `web_fetch` returns `HTTP 200` with only the page `<title>` (sendcloud.net/aboutUs, engagelab.com), or an Akamai `Access Denied` body (ir.jiguang.cn) — `20261124-web-fetch-spa-title-only.md`
 - A folder is moved to `archive/` because its files duplicate a shared tree, though it was a person's own work from that period — `20261124-duplicate-is-not-disposable.md`
+- A bulk docs move or export ships plaintext logins along; grep the moved tree for `user / password` pairs before committing — `20261124-bulk-move-credential-sweep.md`
