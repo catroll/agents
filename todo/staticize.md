@@ -3,8 +3,8 @@
 > Project: ~/Projects/Mine/staticize
 > Docs: docs/roadmap.md, admin/README.md
 > Prefix: ST
-> Next ID: ST-005
-> Updated: 2026-11-24
+> Next ID: ST-006
+> Updated: 2026-11-25
 
 ## Theme: admin operations
 
@@ -67,3 +67,20 @@
     generate` 8730 pages; `bash tools/ci.sh` exit 0; `.workflow/*.yml` run it on
     Python 3.12 -> done 2026-11-24
   (Makefile, tools/ci.sh, .workflow/, docs/build.md, tests/test_articles_imgcheck.py)
+
+### Batch B20261125-publish-env — panel publishes when the daemon has no HOME (done 2026-11-25)
+
+- [x] **ST-005** [P1][B20261125-publish-env] Panel publish died with `HOME:
+  unbound variable` before doing any work
+  - Done when: `tools/publish.sh` runs with no HOME in the caller's
+    environment, the admin process exports HOME, and a regression test pins it.
+  - Ev: job c8ba26d27957 exit 1 at line 49; reproduced with
+    `env -u HOME bash tools/publish.sh --no-search`; full run under the daemon
+    env (no HOME) with `PUBLISH_TARGET=/tmp/staticize-publish-test/` exit 0
+    (8,950 pages, 21,310 files, 7.2 s); `supervisorctl reread` + `update`
+    restarted admin to pid 479396 with `HOME=/home/catroll`;
+    `tests/test_publish_script.py` 4 tests, `tests/test_sitemap_target.py` 4
+    tests; PUBLISH_TARGET now also redirects the sitemap upload -> done
+    2026-11-25
+  (tools/publish.sh, admin/supervisor.conf, markjour/scripts/sitemap.py,
+  tests/test_publish_script.py, tests/test_sitemap_target.py, docs/build.md)
