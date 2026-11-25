@@ -130,3 +130,6 @@ One line per lesson: the trigger (error string, command, or situation) and the f
 - `web_fetch` returns `HTTP 200` with only the page `<title>` (sendcloud.net/aboutUs, engagelab.com), or an Akamai `Access Denied` body (ir.jiguang.cn) — `20261124-web-fetch-spa-title-only.md`
 - A folder is moved to `archive/` because its files duplicate a shared tree, though it was a person's own work from that period — `20261124-duplicate-is-not-disposable.md`
 - A bulk docs move or export ships plaintext logins along; grep the moved tree for `user / password` pairs before committing — `20261124-bulk-move-credential-sweep.md`
+- `HOME: unbound variable` in a script that works from cron but dies when the admin panel/supervisord starts it, or ssh/uv cannot find `~/.ssh/config` under a daemon — `20261125-daemon-spawned-script-no-home.md`
+- A documented local-test switch (`PUBLISH_TARGET`, `--dry-run`, `DEST=…`) still wrote the live host because one stage uploads on its own — `20261125-local-test-switch-misses-self-uploading-step.md`
+- A DSH bundle installs but shows 配置状态 已启用 / 运行状态 未运行, or `1 entry did not activate` / `ERR_MODULE_NOT_FOUND: Cannot find package` for the bundle row — `20261125-dsh-bundle-patch-row-name.md`
