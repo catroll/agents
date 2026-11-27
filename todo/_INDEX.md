@@ -14,6 +14,7 @@ the subset with `[P0]`. Update this table in the same edit as the project file.
 | ISO Maker | [isomaker.md](isomaker.md) | 5 | 0 | — | 2026-11-21 |
 | aliases | [aliases.md](aliases.md) | 0 | 0 | — | 2026-11-21 |
 | StdEnv/stdenv | [stdenv.md](stdenv.md) | 2 | 0 | — | 2026-11-21 |
+| eqr host | [eqr.md](eqr.md) | 4 | 0 | — | 2026-11-26 |
 
 ## Adding a project
 
