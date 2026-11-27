@@ -2,8 +2,8 @@
 
 > Project: this host (`eqr`, Ubuntu 26.04, 16c/26G/915G NVMe)
 > Prefix: E
-> Next ID: E-007
-> Updated: 2026-11-26
+> Next ID: E-010
+> Updated: 2026-11-27
 
 ## Theme: host maintenance
 
@@ -38,5 +38,24 @@ rather than repair. Context and commands:
   -> done 2026-11-26 (owner added `systemd-zram-generator` with `zram-size = ram / 4`, zstd; `/dev/zram0` is swap priority 100)
 
 - [ ] **E-007** [P3][B-backlog] Reclaim k3s leftovers if the test cluster stays unused
-  - Done when: `/var/lib/rancher/k3s` (230M) and the idle system `containerd` are gone or justified
-  - Ev: `du -sh /var/lib/rancher/k3s`; `systemctl is-active containerd`
+  - Progress 2026-11-27: `k3s-killall.sh` ran during the 80/443 outage; KUBE-/CNI- rule counts are 0
+    in both `filter` and `nat`, so the port hijack cannot recur while k3s stays stopped.
+    Remaining: `containerd.service` is still enabled, `/var/lib/rancher/k3s` still 230M,
+    `/usr/local/bin/k3s*` binaries still installed.
+  - Ev: [20261127-caddy-unreachable.md](../../Projects/Mine/WLB/work/2026/Q4/11/20261127-caddy-unreachable.md)
+
+- [ ] **E-008** [P2][B20261127-caddy] Decide on the leftover `containerd.service` (enabled, k3s-only)
+  - Done when: either disabled with a one-line reason, or documented as intentionally kept
+  - Ev: `systemctl is-enabled containerd`; `systemctl status containerd --no-pager | head -5`
+
+### Batch B20261127-caddy — caddy 80/443 unreachable (done 2026-11-27)
+
+Root cause: k3s stopped on 11-26 without cleanup left `CNI-HOSTPORT-DNAT` / `KUBE-SERVICES`
+rules hijacking host 80/443 to a dead pod. Fixed with `k3s-killall.sh`; HTTP/3 disabled so
+`caddy reload` stops colliding on UDP 443. Record:
+[20261127-caddy-unreachable.md](../../Projects/Mine/WLB/work/2026/Q4/11/20261127-caddy-unreachable.md)
+
+- [x] **E-009** [P2][B20261127-caddy] Stop paying one password prompt per privileged command
+  -> done 2026-11-27 (root-owned `/usr/local/bin/eqr-ops` + `/etc/sudoers.d/010-catroll-ops`;
+     `sudo -n eqr-ops status caddy` works while `sudo -n true` still fails — the boundary holds;
+     source `~/Projects/Mine/WLB/eqr/host/agent/`, drift check `bash eqr/host/agent/install.sh check`)
