@@ -211,6 +211,34 @@ has a login session (`Linger` is `no`) — intended on this server. Do not propo
 `enable-linger` or list it as a gap in audits, backups, restore notes or health
 checks.
 
+## Privileged commands on this machine go through `eqr-ops`, never `pkexec`
+
+Confirmed 2026-11-27. `dsh-web.service` is a `--user` unit running as `catroll`,
+so tool calls start unprivileged, and `org.freedesktop.policykit.exec` is
+`auth_admin` (no `_keep` cache) — every `pkexec` call costs the owner a password
+prompt (dozens per incident).
+
+Use the allowlisted broker instead; it needs no prompt and logs one `sudo` line
+per call:
+
+```bash
+sudo -n eqr-ops --help          # full subcommand list
+sudo -n eqr-ops status caddy
+sudo -n eqr-ops ss-ports
+sudo -n eqr-ops iptables-snapshot
+sudo -n eqr-ops caddy-config-put < new-Caddyfile   # validates, backs up, installs
+sudo -n eqr-ops caddy-reload
+sudo -n eqr-ops k3s-cleanup
+```
+
+- `sudo -n` fails **immediately** for anything not allowlisted: report that and
+  ask for the operation to be added (`eqr/host/agent/eqr-ops`), do not fall back
+  to `pkexec`.
+- Source of truth: `~/Projects/Mine/WLB/eqr/host/agent/` (`install.sh check` for
+  drift). The sudoers rule grants only `/usr/local/bin/eqr-ops`.
+- Reads that need no privilege (`journalctl` via the `adm` group, `ss -tln`
+  without `-p`, the Caddyfile at mode 644) should not be escalated at all.
+
 ## Project todos live in ~/.agents/todo/
 
 The cross-session todo list owns planned work; the chat and the session list do
